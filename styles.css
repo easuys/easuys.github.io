@@ -1,0 +1,120 @@
+body {
+    margin: 2cm;
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+}
+
+h2 {
+    font-size: 27px;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 0.5cm;
+    margin-bottom: 0.5cm;
+}
+
+p {
+    font-size: 21px;
+    line-height: 1.5;
+    text-align: justify;
+}
+
+#language-switcher {
+    float: right;
+    font-size: 18px;
+}
+
+#contact-info {
+    margin-top: 0.5cm;
+    font-size: 18px;
+    text-align: left;
+}
+
+#contact-info a {
+    text-decoration: none;
+    color: #000;
+}
+
+#contact-info a:hover {
+    text-decoration: underline;
+}
+/* Slideshow container */
+.slideshow-container {
+    width: 70%; /* Adjust the width as needed for larger screens */
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+}
+
+/* Styles for images within slides */
+.slide-image {
+    width: 100%; /* Adjust image width as needed */
+}
+
+/* Styles for captions */
+.slide-caption {
+    text-align: center;
+    font-size: 18px; /* Adjust font size as needed */
+    padding: 10px;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .slideshow-container {
+        width: 100%; /* Full width for smaller screens */
+    }
+
+    .slide-caption {
+        font-size: 9px; /* Adjust font size for smaller screens */
+    }
+    body {
+        margin: 1cm;
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+    }
+    
+    h1 {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+    }
+    
+    h2 {
+        font-size: 14px;
+        font-weight: bold;
+        text-align: left;
+        margin-top: 0.25cm;
+        margin-bottom: 0.25cm;
+    }
+    
+    p {
+        font-size: 11px;
+        line-height: 1.25;
+        text-align: justify;
+    }
+    
+    #language-switcher {
+        float: right;
+        font-size: 9px;
+    }
+    
+    #contact-info {
+        margin-top: 0.25cm;
+        font-size: 9px;
+        text-align: left;
+    }
+    
+    #contact-info a {
+        text-decoration: none;
+        color: #000;
+    }
+    
+    #contact-info a:hover {
+        text-decoration: underline;
+    }
+}
