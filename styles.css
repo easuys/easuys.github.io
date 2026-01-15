@@ -1,120 +1,331 @@
+:root {
+    --ink: #1a232b;
+    --muted: #5a6772;
+    --accent: #2b4c65;
+    --accent-strong: #1b3142;
+    --paper: #f6f3ec;
+    --paper-bright: #ffffff;
+    --line: #d6d1c6;
+    --shadow: 0 18px 45px rgba(16, 24, 35, 0.12);
+    --radius: 18px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
-    margin: 2cm;
-    font-family: Arial, sans-serif;
-    font-size: 24px;
+    margin: 0;
+    font-family: "Segoe UI", "Tahoma", sans-serif;
+    color: var(--ink);
+    background-color: var(--paper);
+    background-image:
+        radial-gradient(circle at 12% 10%, rgba(43, 76, 101, 0.08), transparent 45%),
+        radial-gradient(circle at 82% 0%, rgba(154, 124, 82, 0.08), transparent 40%),
+        linear-gradient(90deg, rgba(33, 50, 65, 0.04) 1px, transparent 1px),
+        linear-gradient(rgba(33, 50, 65, 0.04) 1px, transparent 1px);
+    background-size: auto, auto, 140px 140px, 140px 140px;
+    background-position: 0 0, 0 0, -24px -24px, -24px -24px;
 }
 
-h1 {
-    font-size: 36px;
-    font-weight: bold;
-    text-align: center;
+img {
+    display: block;
+    max-width: 100%;
 }
 
-h2 {
-    font-size: 27px;
-    font-weight: bold;
-    text-align: left;
-    margin-top: 0.5cm;
-    margin-bottom: 0.5cm;
+figure {
+    margin: 0;
 }
 
-p {
-    font-size: 21px;
-    line-height: 1.5;
-    text-align: justify;
-}
-
-#language-switcher {
-    float: right;
-    font-size: 18px;
-}
-
-#contact-info {
-    margin-top: 0.5cm;
-    font-size: 18px;
-    text-align: left;
-}
-
-#contact-info a {
+a {
+    color: var(--accent);
     text-decoration: none;
-    color: #000;
 }
 
-#contact-info a:hover {
-    text-decoration: underline;
-}
-/* Slideshow container */
-.slideshow-container {
-    width: 70%; /* Adjust the width as needed for larger screens */
-    max-width: 1000px;
-    position: relative;
-    margin: auto;
+a:hover {
+    color: var(--accent-strong);
 }
 
-/* Styles for images within slides */
-.slide-image {
-    width: 100%; /* Adjust image width as needed */
+.page {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 36px 24px 72px;
 }
 
-/* Styles for captions */
-.slide-caption {
-    text-align: center;
-    font-size: 18px; /* Adjust font size as needed */
-    padding: 10px;
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
 }
 
-/* Media query for smaller screens */
-@media (max-width: 768px) {
-    .slideshow-container {
-        width: 100%; /* Full width for smaller screens */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo {
+    width: 72px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(16, 24, 35, 0.12);
+    background: var(--paper-bright);
+    padding: 8px;
+}
+
+.brand-name {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 26px;
+    letter-spacing: 0.2em;
+}
+
+.brand-tagline {
+    margin-top: 6px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+}
+
+.lang-switch a {
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.lang-switch a[aria-current="page"] {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+}
+
+.hero {
+    padding: 36px 0 24px;
+    display: grid;
+    gap: 18px;
+}
+
+.hero h1 {
+    margin: 0;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 40px;
+    line-height: 1.1;
+}
+
+.hero p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.7;
+    max-width: 72ch;
+}
+
+.hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.hero-meta span {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--paper-bright);
+}
+
+.contact-card {
+    margin-top: 12px;
+    background: var(--paper-bright);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 22px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.contact-card h2 {
+    margin: 0;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 20px;
+}
+
+.contact-card p {
+    margin: 6px 0 0 0;
+    font-size: 15px;
+    color: var(--muted);
+}
+
+.section {
+    margin-top: 48px;
+}
+
+.section h2 {
+    margin: 0 0 12px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 28px;
+}
+
+.section p {
+    margin: 0 0 20px;
+    color: var(--muted);
+    max-width: 72ch;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+}
+
+.gallery-item {
+    background: var(--paper-bright);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+}
+
+.gallery-item button {
+    all: unset;
+    display: block;
+    width: 100%;
+    cursor: zoom-in;
+}
+
+.gallery-item button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.gallery-item img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: #f8f5ee;
+    padding: 12px;
+}
+
+.gallery-item figcaption {
+    padding: 14px 16px 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+}
+
+.footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 16, 22, 0.86);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 999;
+}
+
+.lightbox.is-open {
+    display: flex;
+}
+
+.lightbox-content {
+    width: min(1100px, 92vw);
+    display: grid;
+    gap: 16px;
+}
+
+.lightbox-image {
+    max-width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 16px;
+}
+
+.lightbox-caption {
+    color: #e8e9eb;
+    font-size: 14px;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.lightbox-close:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .site-header {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .slide-caption {
-        font-size: 9px; /* Adjust font size for smaller screens */
+    .hero h1 {
+        font-size: 32px;
     }
-    body {
-        margin: 1cm;
-        font-family: Arial, sans-serif;
-        font-size: 12px;
+
+    .contact-card {
+        padding: 18px 20px;
     }
-    
-    h1 {
-        font-size: 18px;
-        font-weight: bold;
-        text-align: center;
+}
+
+@media (max-width: 600px) {
+    .page {
+        padding: 28px 18px 64px;
     }
-    
-    h2 {
-        font-size: 14px;
-        font-weight: bold;
-        text-align: left;
-        margin-top: 0.25cm;
-        margin-bottom: 0.25cm;
+
+    .hero h1 {
+        font-size: 28px;
     }
-    
-    p {
-        font-size: 11px;
-        line-height: 1.25;
-        text-align: justify;
-    }
-    
-    #language-switcher {
-        float: right;
-        font-size: 9px;
-    }
-    
-    #contact-info {
-        margin-top: 0.25cm;
-        font-size: 9px;
-        text-align: left;
-    }
-    
-    #contact-info a {
-        text-decoration: none;
-        color: #000;
-    }
-    
-    #contact-info a:hover {
-        text-decoration: underline;
+
+    .gallery-item img {
+        aspect-ratio: 1 / 1;
     }
 }
