@@ -184,10 +184,36 @@ a:hover {
     font-size: 28px;
 }
 
+.section h3 {
+    margin: 0 0 10px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 20px;
+}
+
 .section p {
     margin: 0 0 20px;
     color: var(--muted);
     max-width: 72ch;
+}
+
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.service-item {
+    background: var(--paper-bright);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.service-item p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
 }
 
 .gallery-grid {
@@ -314,6 +340,7 @@ a:hover {
     .contact-card {
         padding: 18px 20px;
     }
+
 }
 
 @media (max-width: 600px) {
