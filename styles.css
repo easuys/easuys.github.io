@@ -196,6 +196,31 @@ a:hover {
     max-width: 72ch;
 }
 
+.tools-preview {
+    border: 1px solid #c6d2c9;
+    border-left: 5px solid #376a5a;
+    border-radius: 8px;
+    background: var(--paper-bright);
+    padding: 18px 20px;
+}
+
+.button-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    background: var(--accent);
+    color: #ffffff;
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+.button-link:hover {
+    background: var(--accent-strong);
+    color: #ffffff;
+}
+
 .service-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

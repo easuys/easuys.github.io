@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EA Suys - Calculation tools for renovation and building services</title>
+    <meta name="description" content="Indicative EA Suys calculation tools for renovation, building services, heat loss, ventilation, technical shafts, acoustics and tender review.">
+    <meta name="keywords" content="EA Suys calculation tools, renovation quickscan, heat loss, ventilation, HVAC, sanitary installations, technical shafts, acoustics, tender review">
+    <meta name="author" content="EA Suys bv">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="alternate" hreflang="nl-be" href="https://www.easuys.be/tools/">
+    <link rel="alternate" hreflang="en-gb" href="https://www.easuys.be/tools/index-en.html">
+    <link rel="alternate" hreflang="fr-be" href="https://www.easuys.be/tools/index-fr.html">
+    <link rel="alternate" hreflang="x-default" href="https://www.easuys.be/tools/">
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="tools.css">
+</head>
+<body class="tools-page">
+    <div class="page">
+        <header class="site-header site-header-tools">
+            <a class="brand" href="../index-en.html">
+                <img class="logo" src="../images/logo.jpg" alt="EA Suys logo">
+                <div>
+                    <div class="brand-name">EA Suys</div>
+                    <div class="brand-tagline">Calculation tools</div>
+                </div>
+            </a>
+            <nav class="site-nav" aria-label="Navigation">
+                <a href="../index-en.html">Home</a>
+                <a href="index.html">NL</a>
+                <a href="index-en.html" aria-current="page">EN</a>
+                <a href="index-fr.html">FR</a>
+            </nav>
+        </header>
+
+        <main data-tool-app data-lang="en">
+            <section class="tools-hero">
+                <h1 data-tool-page-title>EA Suys calculation tools</h1>
+                <p data-tool-page-intro>Indicative tools for renovation, building services and technical feasibility.</p>
+            </section>
+
+            <section class="tools-disclaimer" aria-label="Status">
+                <h2 data-disclaimer-title>Status</h2>
+                <p data-disclaimer-text>These tools are indicative. They do not replace a design note, code check, EPB reporting or project-specific study by a competent designer.</p>
+            </section>
+
+            <section class="tool-shell">
+                <nav class="tool-tabs" data-tool-tabs role="tablist" aria-label="Calculation tools"></nav>
+                <article class="tool-panel">
+                    <header class="tool-panel-header">
+                        <h2 data-tool-title></h2>
+                        <p data-tool-description></p>
+                    </header>
+
+                    <form class="tool-form" data-tool-form></form>
+
+                    <div class="tool-actions">
+                        <button class="tool-action primary" type="button" data-calculate>Calculate</button>
+                        <button class="tool-action" type="button" data-print>Print report</button>
+                        <button class="tool-action" type="button" data-save>Save input</button>
+                        <label class="tool-upload-label">
+                            <span data-load-label>Load input</span>
+                            <input type="file" accept="application/json" data-load>
+                        </label>
+                        <button class="tool-action" type="button" data-local-save>Save locally</button>
+                        <button class="tool-action" type="button" data-local-load>Load locally</button>
+                        <button class="tool-action mail" type="button" data-mail>Request a study</button>
+                    </div>
+                    <p class="tool-message" data-message aria-live="polite"></p>
+
+                    <section class="tool-results" data-tool-results aria-live="polite"></section>
+                </article>
+            </section>
+
+            <noscript>
+                <p class="tools-noscript">Enable JavaScript to use the calculation tools.</p>
+            </noscript>
+        </main>
+
+        <footer class="footer">
+            <div>EA Suys bv — Kapelle-op-den-Bos, BE</div>
+            <div><a href="mailto:info@easuys.be">info@easuys.be</a></div>
+        </footer>
+    </div>
+
+    <script src="tools.js"></script>
+</body>
+</html>
