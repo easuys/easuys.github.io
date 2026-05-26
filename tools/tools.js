@@ -30,6 +30,8 @@
             warnings: "Aandachtspunten",
             errors: "Controleer de invoer",
             noResult: "Vul de invoer aan om een resultaat te berekenen.",
+            calculating: "Berekening loopt...",
+            apiUnavailable: "De rekendienst is tijdelijk niet bereikbaar.",
             fileError: "Dit bestand kon niet worden geladen.",
             fileLoaded: "Invoer geladen.",
             savedLocal: "Invoer lokaal bewaard in deze browser.",
@@ -85,6 +87,8 @@
             warnings: "Attention points",
             errors: "Check the input",
             noResult: "Complete the input to calculate a result.",
+            calculating: "Calculation running...",
+            apiUnavailable: "The calculation service is temporarily unavailable.",
             fileError: "This file could not be loaded.",
             fileLoaded: "Input loaded.",
             savedLocal: "Input saved locally in this browser.",
@@ -140,6 +144,8 @@
             warnings: "Points d'attention",
             errors: "Vérifiez l'entrée",
             noResult: "Complétez l'entrée pour calculer un résultat.",
+            calculating: "Calcul en cours...",
+            apiUnavailable: "Le service de calcul est temporairement indisponible.",
             fileError: "Ce fichier n'a pas pu être chargé.",
             fileLoaded: "Entrée chargée.",
             savedLocal: "Entrée enregistrée localement dans ce navigateur.",
@@ -250,6 +256,10 @@
             ach: "Luchtwissels",
             envelope: "Bouwdelen",
             ventilation: "Ventilatie",
+            component: "Bouwdeel",
+            uValue: "U-waarde",
+            area: "Oppervlakte",
+            loss: "Verlies",
             totalPower: "Indicatief verwarmingsvermogen",
             transmissionTotal: "Transmissieverlies",
             ventilationTotal: "Ventilatieverlies",
@@ -294,6 +304,10 @@
             ach: "Air changes",
             envelope: "Building parts",
             ventilation: "Ventilation",
+            component: "Building part",
+            uValue: "U-value",
+            area: "Area",
+            loss: "Loss",
             totalPower: "Indicative heating power",
             transmissionTotal: "Transmission loss",
             ventilationTotal: "Ventilation loss",
@@ -338,6 +352,10 @@
             ach: "Renouvellements d'air",
             envelope: "Éléments",
             ventilation: "Ventilation",
+            component: "Élément",
+            uValue: "Valeur U",
+            area: "Surface",
+            loss: "Perte",
             totalPower: "Puissance de chauffage indicative",
             transmissionTotal: "Perte par transmission",
             ventilationTotal: "Perte par ventilation",
@@ -491,6 +509,15 @@
         }
     }
 
+    const API_BASE_URL = "https://easuys-tools-api.yellow-violet-f185.workers.dev";
+    const API_ENDPOINTS = {
+        renovation: "/calculate/renovation",
+        shafts: "/calculate/shaft",
+        offer: "/calculate/offer",
+        acoustics: "/calculate/acoustics",
+        intake: "/calculate/intake"
+    };
+
     const toNumber = (value) => {
         if (value === null || value === undefined || value === "") return null;
         const normalized = String(value).trim().replace(",", ".");
@@ -519,72 +546,6 @@
         if (options.min !== undefined && parsed < options.min) throw new CalculationError([`${label}: min ${options.min}`]);
         if (options.max !== undefined && parsed > options.max) throw new CalculationError([`${label}: max ${options.max}`]);
         return parsed;
-    };
-
-    const roundTo = (value, decimals = 1) => {
-        const factor = 10 ** decimals;
-        return Math.round(value * factor) / factor;
-    };
-
-    const roundUpTo = (value, step) => Math.ceil(value / step) * step;
-
-    const transmissionLoss = (uValue, area, deltaT) => uValue * area * deltaT;
-
-    const ventilationLoss = (flowM3H, deltaT) => 0.34 * flowM3H * deltaT;
-
-    const flowFromVolume = (volumeM3, airChangesH) => volumeM3 * airChangesH;
-
-    const massLawIndex = (surfaceMassKgM2, frequencyHz) => {
-        if (surfaceMassKgM2 <= 0 || frequencyHz <= 0) {
-            throw new CalculationError(["Surface mass and frequency must be positive."]);
-        }
-        return 20 * Math.log10(surfaceMassKgM2 * frequencyHz) - 47;
-    };
-
-    const ductSizing = (flowM3H, velocityMS, ductCount = 1, insulationMm = 0, clearanceMm = 0, pipeWidthMm = 0, pipeDepthMm = 0) => {
-        if (flowM3H <= 0 || velocityMS <= 0 || ductCount <= 0) {
-            throw new CalculationError(["Air flow, velocity and duct count must be positive."]);
-        }
-        const areaM2 = flowM3H / (3600 * velocityMS);
-        const diameterMm = Math.sqrt((4 * areaM2) / Math.PI) * 1000;
-        const squareMm = Math.sqrt(areaM2) * 1000;
-        const rectHeightMm = Math.sqrt(areaM2 / 2) * 1000;
-        const rectWidthMm = rectHeightMm * 2;
-        const outsideDiameterMm = diameterMm + 2 * insulationMm;
-        const airWidthMm = ductCount * outsideDiameterMm + (ductCount + 1) * clearanceMm;
-        const airHeightMm = outsideDiameterMm + 2 * clearanceMm;
-        const pipeWidthWithClearance = pipeWidthMm > 0 ? pipeWidthMm + 2 * clearanceMm : 0;
-        const pipeDepthWithClearance = pipeDepthMm > 0 ? pipeDepthMm + 2 * clearanceMm : 0;
-        const shaftWidthMm = roundUpTo(Math.max(airWidthMm, pipeWidthWithClearance), 10);
-        const shaftHeightMm = roundUpTo(airHeightMm + pipeDepthWithClearance + (pipeDepthWithClearance > 0 ? clearanceMm : 0), 10);
-        return {
-            areaM2,
-            diameterMm,
-            squareMm,
-            rectWidthMm,
-            rectHeightMm,
-            outsideDiameterMm,
-            shaftWidthMm,
-            shaftHeightMm
-        };
-    };
-
-    const renovationQuickscan = ({ components, deltaT, flowM3H, marginPercent }) => {
-        const componentRows = components.map((component) => ({
-            ...component,
-            lossW: transmissionLoss(component.uValue, component.area, deltaT)
-        }));
-        const transmissionW = componentRows.reduce((sum, component) => sum + component.lossW, 0);
-        const ventilationW = ventilationLoss(flowM3H, deltaT);
-        const baseW = transmissionW + ventilationW;
-        const marginW = baseW * (marginPercent / 100);
-        return {
-            componentRows,
-            transmissionW,
-            ventilationW,
-            marginW,
-            totalW: baseW + marginW
-        };
     };
 
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -795,7 +756,27 @@
         </section>
     ` : "";
 
-    const calculateRenovation = (state, lang) => {
+    const postCalculation = async (toolId, payload, lang) => {
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS[toolId]}`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (error) {
+            throw new CalculationError([LANGS[lang].apiUnavailable]);
+        }
+        if (!response.ok || !data.ok) {
+            throw new CalculationError((data && data.details && data.details.length)
+                ? data.details
+                : [data && data.error ? data.error : LANGS[lang].apiUnavailable]);
+        }
+        return data.result || {};
+    };
+
+    const calculateRenovation = async (state, lang) => {
         const l = LABELS[lang];
         const errors = [];
         const warnings = [];
@@ -821,36 +802,41 @@
         let flow = optionalNumber(state.ventilationFlow, l.ventilationFlow, { min: 0 });
         const volume = optionalNumber(state.volume, l.volume, { min: 0 });
         const ach = optionalNumber(state.ach, l.ach, { min: 0 });
-        if ((flow === null || flow === 0) && volume !== null && ach !== null) {
-            flow = flowFromVolume(volume, ach);
-        } else if (flow !== null && flow > 0 && volume !== null && ach !== null) {
+        if (flow !== null && flow > 0 && volume !== null && ach !== null) {
             warnings.push(LANGS[lang].directFlowUsed);
         }
-        flow = flow || 0;
-        if (!components.length && flow === 0) warnings.push(LANGS[lang].noHeatInput);
+        if (!components.length && !flow && !(volume !== null && ach !== null)) warnings.push(LANGS[lang].noHeatInput);
         if (errors.length) return { errors, warnings };
-        const result = renovationQuickscan({ components, deltaT, flowM3H: flow, marginPercent: margin });
+        const result = await postCalculation("renovation", {
+            indoorTemp: indoor,
+            outdoorTemp: outdoor,
+            renovationMargin: margin,
+            components,
+            ventilationFlow: flow || 0,
+            volume: volume ?? undefined,
+            airChanges: ach ?? undefined
+        }, lang);
         return {
             warnings,
             cards: [
-                { label: l.totalPower, value: formatValue(result.totalW / 1000, "kW", lang, 2), detail: "incl. marge" },
+                { label: l.totalPower, value: formatValue(result.totalKw, "kW", lang, 2), detail: "incl. marge" },
                 { label: l.transmissionTotal, value: formatValue(result.transmissionW, "W", lang, 0), detail: "Σ U·A·ΔT" },
                 { label: l.ventilationTotal, value: formatValue(result.ventilationW, "W", lang, 0), detail: "0.34·qv·ΔT" },
                 { label: l.marginValue, value: formatValue(result.marginW, "W", lang, 0), detail: `${formatNumber(margin, lang, 0)} %` }
             ],
             table: detailTable(
                 [l.component, l.uValue, l.area, l.loss],
-                result.componentRows.map((row) => [
+                (result.components || []).map((row) => [
                     row.label,
                     formatValue(row.uValue, "W/m²K", lang, 2),
                     formatValue(row.area, "m²", lang, 1),
                     formatValue(row.lossW, "W", lang, 0)
-                ]).concat([[l.ventilationFlow, formatValue(flow, "m³/h", lang, 0), `ΔT ${formatValue(deltaT, "K", lang, 1)}`, formatValue(result.ventilationW, "W", lang, 0)]])
+                ]).concat([[l.ventilationFlow, formatValue(result.ventilationFlowM3H, "m³/h", lang, 0), `ΔT ${formatValue(result.deltaT, "K", lang, 1)}`, formatValue(result.ventilationW, "W", lang, 0)]])
             )
         };
     };
 
-    const calculateShafts = (state, lang) => {
+    const calculateShafts = async (state, lang) => {
         const l = LABELS[lang];
         const flow = requireNumber(state.airFlow, l.airFlow, { min: 0.01 });
         const velocity = requireNumber(state.airSpeed, l.airSpeed, { min: 0.1 });
@@ -859,48 +845,55 @@
         const clearance = optionalNumber(state.clearance, l.clearance, { min: 0 }) ?? 0;
         const pipeWidth = optionalNumber(state.pipeWidth, l.pipeWidth, { min: 0 }) ?? 0;
         const pipeDepth = optionalNumber(state.pipeDepth, l.pipeDepth, { min: 0 }) ?? 0;
-        const result = ductSizing(flow, velocity, ductCount, insulation, clearance, pipeWidth, pipeDepth);
+        const result = await postCalculation("shafts", {
+            airFlow: flow,
+            airSpeed: velocity,
+            ductCount,
+            insulation,
+            clearance,
+            pipeWidth,
+            pipeDepth
+        }, lang);
         return {
-            warnings: velocity > 4 ? [LANGS[lang].highVelocity] : [],
+            warnings: (result.warningCodes || []).includes("highVelocity") ? [LANGS[lang].highVelocity] : [],
             cards: [
-                { label: l.ductDiameter, value: formatValue(result.diameterMm, "mm", lang, 0), detail: "A = qv / (3600·v)" },
-                { label: l.rectDuct, value: `${formatNumber(result.rectWidthMm, lang, 0)} × ${formatNumber(result.rectHeightMm, lang, 0)} mm`, detail: "2:1" },
-                { label: l.shaftSize, value: `${formatNumber(result.shaftWidthMm, lang, 0)} × ${formatNumber(result.shaftHeightMm, lang, 0)} mm`, detail: "afgerond per 10 mm" }
+                { label: l.ductDiameter, value: formatValue(result.roundDuctDiameterMm, "mm", lang, 0), detail: "A = qv / (3600·v)" },
+                { label: l.rectDuct, value: `${formatNumber(result.rectangularDuctMm.width, lang, 0)} × ${formatNumber(result.rectangularDuctMm.height, lang, 0)} mm`, detail: "2:1" },
+                { label: l.shaftSize, value: `${formatNumber(result.indicativeShaftMm.width, lang, 0)} × ${formatNumber(result.indicativeShaftMm.height, lang, 0)} mm`, detail: "afgerond per 10 mm" }
             ],
             table: detailTable(
                 [LANGS[lang].formula, LANGS[lang].value, LANGS[lang].unit],
                 [
                     ["qv / (3600·v)", formatNumber(result.areaM2, lang, 4), "m²"],
-                    ["sqrt(4A/π)", formatNumber(result.diameterMm, lang, 0), "mm"],
-                    ["sqrt(A)", formatNumber(result.squareMm, lang, 0), "mm"],
-                    ["diameter + 2·isolatie", formatNumber(result.outsideDiameterMm, lang, 0), "mm"],
-                    ["schacht met speling", `${formatNumber(result.shaftWidthMm, lang, 0)} × ${formatNumber(result.shaftHeightMm, lang, 0)}`, "mm"]
+                    ["sqrt(4A/π)", formatNumber(result.roundDuctDiameterMm, lang, 0), "mm"],
+                    ["sqrt(A)", formatNumber(result.squareDuctSideMm, lang, 0), "mm"],
+                    ["diameter + 2·isolatie", formatNumber(result.outsideDiameterWithInsulationMm, lang, 0), "mm"],
+                    ["schacht met speling", `${formatNumber(result.indicativeShaftMm.width, lang, 0)} × ${formatNumber(result.indicativeShaftMm.height, lang, 0)}`, "mm"]
                 ]
             )
         };
     };
 
-    const calculateOffer = (state, lang) => {
+    const calculateOffer = async (state, lang) => {
         const l = LABELS[lang];
         const checked = OFFER_ITEMS.filter(([field]) => Boolean(state[field]));
         const criticalMissing = OFFER_ITEMS.filter(([field, , critical]) => critical && !state[field]);
-        const score = (checked.length / OFFER_ITEMS.length) * 100;
-        const prices = ["quoteA", "quoteB", "quoteC"]
-            .map((field) => optionalNumber(state[field], l[field] || field, { min: 0 }))
-            .filter((value) => value !== null && value > 0);
-        let spread = null;
-        if (prices.length >= 2) {
-            const min = Math.min(...prices);
-            const max = Math.max(...prices);
-            spread = ((max - min) / min) * 100;
-        }
+        const quoteA = optionalNumber(state.quoteA, l.quoteA, { min: 0 });
+        const quoteB = optionalNumber(state.quoteB, l.quoteB, { min: 0 });
+        const quoteC = optionalNumber(state.quoteC, l.quoteC, { min: 0 });
+        const result = await postCalculation("offer", {
+            quoteA,
+            quoteB,
+            quoteC,
+            checks: Object.fromEntries(OFFER_ITEMS.map(([field]) => [field, Boolean(state[field])]))
+        }, lang);
         const warnings = criticalMissing.map(([, labels]) => `${LANGS[lang].missing}: ${textFor(labels, lang)}`);
-        if (spread !== null && spread > 25) warnings.push(LANGS[lang].highPriceSpread);
+        if ((result.warningCodes || []).includes("highPriceSpread")) warnings.push(LANGS[lang].highPriceSpread);
         return {
             warnings,
             cards: [
-                { label: l.offerScore, value: `${formatNumber(score, lang, 0)} %`, detail: score >= 80 ? LANGS[lang].ok : LANGS[lang].warnings },
-                { label: l.priceSpread, value: spread === null ? "-" : `${formatNumber(spread, lang, 0)} %`, detail: prices.length >= 2 ? "max-min/min" : "min. 2 offertes" },
+                { label: l.offerScore, value: `${formatNumber(result.scorePercent, lang, 0)} %`, detail: result.scorePercent >= 80 ? LANGS[lang].ok : LANGS[lang].warnings },
+                { label: l.priceSpread, value: result.priceSpreadPercent === null ? "-" : `${formatNumber(result.priceSpreadPercent, lang, 0)} %`, detail: result.priceSpreadPercent === null ? "min. 2 offertes" : "max-min/min" },
                 { label: LANGS[lang].missing, value: String(OFFER_ITEMS.length - checked.length), detail: `${criticalMissing.length} kritiek` }
             ],
             table: detailTable(
@@ -913,52 +906,65 @@
         };
     };
 
-    const calculateAcoustics = (state, lang) => {
+    const calculateAcoustics = async (state, lang) => {
         const l = LABELS[lang];
         const mass = requireNumber(state.surfaceMass, l.surfaceMass, { min: 0.01 });
         const frequency = requireNumber(state.frequency, l.frequency, { min: 1 });
         const margin = optionalNumber(state.flankingMargin, l.flankingMargin, { min: 0 }) ?? 0;
         const target = optionalNumber(state.acousticTarget, l.acousticTarget, { min: 0 }) ?? 0;
-        const raw = massLawIndex(mass, frequency);
-        const practical = raw - margin;
-        const diff = practical - target;
+        const result = await postCalculation("acoustics", {
+            surfaceMass: mass,
+            frequency,
+            flankingMargin: margin,
+            acousticTarget: target
+        }, lang);
         return {
-            warnings: diff < 0 ? [LANGS[lang].lowAcoustic] : [],
+            warnings: (result.warningCodes || []).includes("lowAcoustic") ? [LANGS[lang].lowAcoustic] : [],
             cards: [
-                { label: l.massLaw, value: formatValue(raw, "dB", lang, 1), detail: "20 log10(m'·f) - 47" },
-                { label: l.practicalIndex, value: formatValue(practical, "dB", lang, 1), detail: `-${formatNumber(margin, lang, 1)} dB` },
-                { label: l.targetDifference, value: formatValue(diff, "dB", lang, 1), detail: target ? `${formatNumber(target, lang, 1)} dB` : "" }
+                { label: l.massLaw, value: formatValue(result.massLawDb, "dB", lang, 1), detail: "20 log10(m'·f) - 47" },
+                { label: l.practicalIndex, value: formatValue(result.practicalDb, "dB", lang, 1), detail: `-${formatNumber(margin, lang, 1)} dB` },
+                { label: l.targetDifference, value: formatValue(result.targetDifferenceDb, "dB", lang, 1), detail: target ? `${formatNumber(result.targetDb, lang, 1)} dB` : "" }
             ],
             table: detailTable(
                 [LANGS[lang].formula, LANGS[lang].value],
                 [
                     ["m'·f", formatNumber(mass * frequency, lang, 0)],
-                    ["20 log10(m'·f) - 47", formatValue(raw, "dB", lang, 1)],
-                    ["R - marge", formatValue(practical, "dB", lang, 1)]
+                    ["20 log10(m'·f) - 47", formatValue(result.massLawDb, "dB", lang, 1)],
+                    ["R - marge", formatValue(result.practicalDb, "dB", lang, 1)]
                 ]
             )
         };
     };
 
-    const calculateIntake = (state, lang) => {
+    const calculateIntake = async (state, lang) => {
         const l = LABELS[lang];
         const openingWidth = requireNumber(state.openingWidth, l.openingWidth, { min: 0 });
         const floorsAbove = requireNumber(state.floorsAbove, l.floorsAbove, { min: 0 });
         const span = requireNumber(state.span, l.span, { min: 0 });
-        const checked = INTAKE_ITEMS.filter(([field]) => Boolean(state[field]));
-        const readiness = (checked.length / INTAKE_ITEMS.length) * 100;
-        const attentionPoints = [];
-        if (openingWidth >= 3) attentionPoints.push(LANGS[lang].largeOpening);
-        if (floorsAbove >= 2) attentionPoints.push(LANGS[lang].multipleFloors);
-        if (span >= 5) attentionPoints.push(LANGS[lang].largeSpan);
-        if (state.loadChange) attentionPoints.push(LANGS[lang].newLoads);
+        const result = await postCalculation("intake", {
+            openingWidth,
+            floorsAbove,
+            span,
+            loadChange: Boolean(state.loadChange),
+            ...Object.fromEntries(INTAKE_ITEMS.map(([field]) => [field, Boolean(state[field])]))
+        }, lang);
+        const attentionLabels = {
+            largeOpening: LANGS[lang].largeOpening,
+            multipleFloors: LANGS[lang].multipleFloors,
+            largeSpan: LANGS[lang].largeSpan,
+            newLoads: LANGS[lang].newLoads
+        };
+        const attentionPoints = (result.attentionCodes || []).map((code) => attentionLabels[code]).filter(Boolean);
         const attentionScore = attentionPoints.length;
-        const attention = attentionScore >= 3 ? LANGS[lang].attentionHigh : attentionScore >= 1 ? LANGS[lang].attentionMedium : LANGS[lang].attentionLow;
-        const missing = INTAKE_ITEMS.filter(([field]) => !state[field]).map(([, labels]) => `${LANGS[lang].missing}: ${textFor(labels, lang)}`);
+        const attention = result.attentionLevel === "high" ? LANGS[lang].attentionHigh : result.attentionLevel === "medium" ? LANGS[lang].attentionMedium : LANGS[lang].attentionLow;
+        const missing = (result.missing || []).map((field) => {
+            const item = INTAKE_ITEMS.find(([key]) => key === field);
+            return item ? `${LANGS[lang].missing}: ${textFor(item[1], lang)}` : `${LANGS[lang].missing}: ${field}`;
+        });
         return {
             warnings: attentionPoints.concat(missing),
             cards: [
-                { label: l.readiness, value: `${formatNumber(readiness, lang, 0)} %`, detail: `${checked.length}/${INTAKE_ITEMS.length}` },
+                { label: l.readiness, value: `${formatNumber(result.readinessPercent, lang, 0)} %`, detail: `${(result.present || []).length}/${INTAKE_ITEMS.length}` },
                 { label: l.attention, value: attention, detail: `${attentionScore} ${LANGS[lang].warnings.toLowerCase()}` },
                 { label: l.openingWidth, value: formatValue(openingWidth, "m", lang, 2), detail: `${formatNumber(floorsAbove, lang, 0)} ${l.floorsAbove.toLowerCase()}` }
             ],
@@ -985,31 +991,25 @@
         intake: renderIntakeForm
     };
 
-    const renderVerification = (toolId, lang) => {
-        const tests = runSelfTests().filter((test) => test.tool === toolId);
-        return `
-            <section class="verification-block">
-                <h3>${escapeHtml(LANGS[lang].checks)}</h3>
-                <ul>
-                    ${tests.map((test) => `<li class="${test.pass ? "pass" : "fail"}">${escapeHtml(test.label)}: ${test.pass ? "OK" : "FAIL"} (${escapeHtml(test.actual)} / ${escapeHtml(test.expected)})</li>`).join("")}
-                </ul>
-            </section>
-        `;
-    };
+    let renderCounter = 0;
+    let renderTimer = null;
 
-    const renderResults = () => {
+    const renderResults = async () => {
+        const counter = (renderCounter += 1);
         const lang = appState.lang;
         const t = LANGS[lang];
         const resultEl = document.querySelector("[data-tool-results]");
         if (!resultEl) return;
+        resultEl.innerHTML = `<h2>${escapeHtml(t.results)}</h2><p>${escapeHtml(t.calculating)}</p>`;
         let result;
         try {
-            result = calculators[appState.activeTool](getFormState(), lang);
+            result = await calculators[appState.activeTool](getFormState(), lang);
         } catch (error) {
             result = { errors: error.messages || [error.message], warnings: [] };
         }
+        if (counter !== renderCounter) return;
         if (result.errors && result.errors.length) {
-            resultEl.innerHTML = messageList(t.errors, result.errors, "tool-errors") + renderVerification(appState.activeTool, lang);
+            resultEl.innerHTML = messageList(t.errors, result.errors, "tool-errors");
             return;
         }
         resultEl.innerHTML = `
@@ -1017,8 +1017,12 @@
             ${resultCards(result.cards || [], lang)}
             ${result.table ? `<h3>${escapeHtml(t.details)}</h3>${result.table}` : ""}
             ${messageList(t.warnings, result.warnings || [], "tool-warnings")}
-            ${renderVerification(appState.activeTool, lang)}
         `;
+    };
+
+    const scheduleRenderResults = () => {
+        window.clearTimeout(renderTimer);
+        renderTimer = window.setTimeout(renderResults, 350);
     };
 
     const renderTool = (toolId) => {
@@ -1098,8 +1102,8 @@
         const hashTool = window.location.hash ? window.location.hash.slice(1) : "";
         renderTool(TOOL_TEXT[hashTool] ? hashTool : appState.activeTool);
 
-        document.querySelector("[data-tool-form]").addEventListener("input", renderResults);
-        document.querySelector("[data-tool-form]").addEventListener("change", renderResults);
+        document.querySelector("[data-tool-form]").addEventListener("input", scheduleRenderResults);
+        document.querySelector("[data-tool-form]").addEventListener("change", scheduleRenderResults);
         document.querySelector("[data-calculate]").addEventListener("click", renderResults);
         document.querySelector("[data-print]").addEventListener("click", () => window.print());
         document.querySelector("[data-save]").addEventListener("click", saveStateToFile);
@@ -1142,37 +1146,7 @@
         });
     };
 
-    const nearlyEqual = (actual, expected, tolerance = 0.05) => Math.abs(actual - expected) <= tolerance;
-
-    const runSelfTests = () => {
-        const renovation = renovationQuickscan({
-            components: [{ label: "Test", uValue: 1.5, area: 20 }],
-            deltaT: 25,
-            flowM3H: 150,
-            marginPercent: 0
-        });
-        const shaft = ductSizing(360, 3, 1, 0, 0, 0, 0);
-        const offerScore = (10 / 12) * 100;
-        const acoustic = massLawIndex(250, 500);
-        const intakeReadiness = (4 / 8) * 100;
-        return [
-            { tool: "renovation", label: "U=1.5, A=20, ΔT=25", actual: `${roundTo(renovation.transmissionW, 0)} W`, expected: "750 W", pass: nearlyEqual(renovation.transmissionW, 750, 0.01) },
-            { tool: "renovation", label: "qv=150, ΔT=25", actual: `${roundTo(renovation.ventilationW, 0)} W`, expected: "1275 W", pass: nearlyEqual(renovation.ventilationW, 1275, 0.01) },
-            { tool: "shafts", label: "qv=360, v=3", actual: `${roundTo(shaft.areaM2, 4)} m² / ${roundTo(shaft.diameterMm, 0)} mm`, expected: "0.0333 m² / 206 mm", pass: nearlyEqual(shaft.areaM2, 0.033333, 0.0001) && nearlyEqual(shaft.diameterMm, 206.01, 0.2) },
-            { tool: "offer", label: "10/12 checks", actual: `${roundTo(offerScore, 1)} %`, expected: "83.3 %", pass: nearlyEqual(offerScore, 83.333, 0.05) },
-            { tool: "acoustics", label: "m'=250, f=500", actual: `${roundTo(acoustic, 1)} dB`, expected: "54.9 dB", pass: nearlyEqual(acoustic, 54.938, 0.05) },
-            { tool: "intake", label: "4/8 stukken", actual: `${roundTo(intakeReadiness, 0)} %`, expected: "50 %", pass: nearlyEqual(intakeReadiness, 50, 0.01) }
-        ];
-    };
-
     return {
-        transmissionLoss,
-        ventilationLoss,
-        flowFromVolume,
-        massLawIndex,
-        ductSizing,
-        renovationQuickscan,
-        runSelfTests,
         initApp
     };
 });
