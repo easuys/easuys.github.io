@@ -331,7 +331,22 @@
             cooling: "Koeling",
             ahuFlow: "Luchtgroepdebiet",
             productDirection: "Productrichting",
-            sourceBasis: "Bronbasis"
+            sourceBasis: "Bronbasis",
+            indoorWinterRh: "RV binnen winter",
+            outdoorWinterRh: "RV buiten winter",
+            indoorSummerRh: "RV binnen zomer",
+            outdoorSummerRh: "RV buiten zomer",
+            pressureDrop: "Drukverlies luchtgroep",
+            cleanroomFilterPressure: "Cleanroom filterdruk",
+            fanEfficiency: "Ventilatorrendement",
+            cleanroomLeakage: "Cleanroom lekdebiet",
+            fanPower: "Ventilatorvermogen",
+            sfp: "SFP",
+            humidification: "Bevochtiging",
+            dehumidification: "Ontvochtiging",
+            latentCooling: "Latente koeling",
+            coolingInclFan: "Koeling incl. vocht/fan",
+            leakage: "Lek/transfer"
         },
         en: {
             indoorTemp: "Indoor temperature",
@@ -405,7 +420,22 @@
             cooling: "Cooling",
             ahuFlow: "AHU flow",
             productDirection: "Product direction",
-            sourceBasis: "Source basis"
+            sourceBasis: "Source basis",
+            indoorWinterRh: "Indoor RH winter",
+            outdoorWinterRh: "Outdoor RH winter",
+            indoorSummerRh: "Indoor RH summer",
+            outdoorSummerRh: "Outdoor RH summer",
+            pressureDrop: "AHU pressure drop",
+            cleanroomFilterPressure: "Cleanroom filter drop",
+            fanEfficiency: "Fan efficiency",
+            cleanroomLeakage: "Cleanroom leakage",
+            fanPower: "Fan power",
+            sfp: "SFP",
+            humidification: "Humidification",
+            dehumidification: "Dehumidification",
+            latentCooling: "Latent cooling",
+            coolingInclFan: "Cooling incl. moisture/fan",
+            leakage: "Leak/transfer"
         },
         fr: {
             indoorTemp: "Température intérieure",
@@ -479,7 +509,22 @@
             cooling: "Refroidissement",
             ahuFlow: "Débit CTA",
             productDirection: "Orientation produits",
-            sourceBasis: "Base de sources"
+            sourceBasis: "Base de sources",
+            indoorWinterRh: "HR intérieur hiver",
+            outdoorWinterRh: "HR extérieur hiver",
+            indoorSummerRh: "HR intérieur été",
+            outdoorSummerRh: "HR extérieur été",
+            pressureDrop: "Perte de charge CTA",
+            cleanroomFilterPressure: "Perte filtre cleanroom",
+            fanEfficiency: "Rendement ventilateur",
+            cleanroomLeakage: "Fuite cleanroom",
+            fanPower: "Puissance ventilateur",
+            sfp: "SFP",
+            humidification: "Humidification",
+            dehumidification: "Déshumidification",
+            latentCooling: "Froid latent",
+            coolingInclFan: "Froid incl. humidité/vent.",
+            leakage: "Fuite/transfert"
         }
     };
 
@@ -490,11 +535,19 @@
             outdoorWinterTemp: -8,
             indoorSummerTemp: 26,
             outdoorSummerTemp: 32,
+            indoorWinterRh: 45,
+            outdoorWinterRh: 86,
+            indoorSummerRh: 50,
+            outdoorSummerRh: 35,
             heatRecoveryPercent: 75,
             marginPercent: 15,
             ductVelocityMS: 4,
             defaultUValue: 0.45,
             pressureOffsetPercent: 8,
+            pressureDropPa: 700,
+            cleanroomFilterPressurePa: 300,
+            fanEfficiencyPercent: 60,
+            cleanroomLeakagePercent: 7,
             room1Name: "Leslokaal",
             room1Type: "classroom",
             room1Area: 60,
@@ -913,11 +966,19 @@
                 ${input("outdoorWinterTemp", l.outdoorWinter, "°C", d.outdoorWinterTemp)}
                 ${input("indoorSummerTemp", l.indoorSummer, "°C", d.indoorSummerTemp)}
                 ${input("outdoorSummerTemp", l.outdoorSummer, "°C", d.outdoorSummerTemp)}
+                ${input("indoorWinterRh", l.indoorWinterRh, "%", d.indoorWinterRh, { min: 10, max: 90 })}
+                ${input("outdoorWinterRh", l.outdoorWinterRh, "%", d.outdoorWinterRh, { min: 0, max: 100 })}
+                ${input("indoorSummerRh", l.indoorSummerRh, "%", d.indoorSummerRh, { min: 10, max: 90 })}
+                ${input("outdoorSummerRh", l.outdoorSummerRh, "%", d.outdoorSummerRh, { min: 0, max: 100 })}
                 ${input("heatRecoveryPercent", l.heatRecovery, "%", d.heatRecoveryPercent, { min: 0, max: 95 })}
                 ${input("marginPercent", l.renovationMargin, "%", d.marginPercent, { min: 0, max: 100 })}
                 ${input("ductVelocityMS", l.ductVelocity, "m/s", d.ductVelocityMS, { min: 0.5, max: 12 })}
                 ${input("defaultUValue", l.defaultUValue, "W/m²K", d.defaultUValue, { min: 0 })}
                 ${input("pressureOffsetPercent", l.pressureOffset, "%", d.pressureOffsetPercent, { min: 0, max: 30 })}
+                ${input("pressureDropPa", l.pressureDrop, "Pa", d.pressureDropPa, { min: 50, max: 3000 })}
+                ${input("cleanroomFilterPressurePa", l.cleanroomFilterPressure, "Pa", d.cleanroomFilterPressurePa, { min: 0, max: 1500 })}
+                ${input("fanEfficiencyPercent", l.fanEfficiency, "%", d.fanEfficiencyPercent, { min: 20, max: 90 })}
+                ${input("cleanroomLeakagePercent", l.cleanroomLeakage, "%", d.cleanroomLeakagePercent, { min: 0, max: 25 })}
             </div>
             <h3>${escapeHtml(l.roomSchedule)}</h3>
             ${renderHvacRoomRows(d, lang)}
@@ -1073,11 +1134,19 @@
             outdoorWinterTemp: requireNumber(state.outdoorWinterTemp, l.outdoorWinter),
             indoorSummerTemp: requireNumber(state.indoorSummerTemp, l.indoorSummer),
             outdoorSummerTemp: requireNumber(state.outdoorSummerTemp, l.outdoorSummer),
+            indoorWinterRh: requireNumber(state.indoorWinterRh, l.indoorWinterRh, { min: 10, max: 90 }),
+            outdoorWinterRh: requireNumber(state.outdoorWinterRh, l.outdoorWinterRh, { min: 0, max: 100 }),
+            indoorSummerRh: requireNumber(state.indoorSummerRh, l.indoorSummerRh, { min: 10, max: 90 }),
+            outdoorSummerRh: requireNumber(state.outdoorSummerRh, l.outdoorSummerRh, { min: 0, max: 100 }),
             heatRecoveryPercent: requireNumber(state.heatRecoveryPercent, l.heatRecovery, { min: 0, max: 95 }),
             marginPercent: requireNumber(state.marginPercent, l.renovationMargin, { min: 0, max: 100 }),
             ductVelocityMS: requireNumber(state.ductVelocityMS, l.ductVelocity, { min: 0.5, max: 12 }),
             defaultUValue: requireNumber(state.defaultUValue, l.defaultUValue, { min: 0 }),
             pressureOffsetPercent: requireNumber(state.pressureOffsetPercent, l.pressureOffset, { min: 0, max: 30 }),
+            pressureDropPa: requireNumber(state.pressureDropPa, l.pressureDrop, { min: 50, max: 3000 }),
+            cleanroomFilterPressurePa: requireNumber(state.cleanroomFilterPressurePa, l.cleanroomFilterPressure, { min: 0, max: 1500 }),
+            fanEfficiencyPercent: requireNumber(state.fanEfficiencyPercent, l.fanEfficiency, { min: 20, max: 90 }),
+            cleanroomLeakagePercent: requireNumber(state.cleanroomLeakagePercent, l.cleanroomLeakage, { min: 0, max: 25 }),
             rooms
         }, lang);
         const totals = result.totals || {};
@@ -1088,8 +1157,10 @@
             formatValue(room.extractM3H, "m³/h", lang, 0),
             formatValue(room.ach, "1/h", lang, 1),
             optionLabel(HVAC_PRESSURE_ROLES, room.pressureRole, lang),
+            formatValue(room.leakageM3H || Math.abs(room.transferM3H || 0), "m³/h", lang, 0),
             formatValue(room.heatingW / 1000, "kW", lang, 1),
             formatValue(room.coolingW / 1000, "kW", lang, 1),
+            `${formatValue(room.humidificationKgH, "kg/h", lang, 2)} / ${formatValue(room.dehumidificationKgH, "kg/h", lang, 2)}`,
             room.filterConcept || ""
         ]);
         const productRows = (result.productReferences || []).map((item) => [
@@ -1106,11 +1177,15 @@
                 { label: l.outdoorAir, value: formatValue(totals.outdoorAirM3H, "m³/h", lang, 0), detail: `${l.heatRecovery} ${formatValue((result.conditions || {}).heatRecoveryPercent, "%", lang, 0)}` },
                 { label: l.heating, value: formatValue(totals.heatingKw, "kW", lang, 1), detail: "concept" },
                 { label: l.cooling, value: formatValue(totals.coolingKw, "kW", lang, 1), detail: "concept" },
+                { label: l.coolingInclFan, value: formatValue(totals.coolingWithLatentAndFanKw, "kW", lang, 1), detail: `${l.latentCooling} ${formatValue(totals.latentCoolingKw, "kW", lang, 1)}` },
+                { label: l.fanPower, value: formatValue(totals.fanPowerKw, "kW", lang, 2), detail: `${l.sfp} ${formatValue(totals.sfpKwPerM3S, "kW/(m³/s)", lang, 2)}` },
+                { label: l.humidification, value: formatValue(totals.humidificationKgH, "kg/h", lang, 2), detail: `${l.dehumidification} ${formatValue(totals.dehumidificationKgH, "kg/h", lang, 2)}` },
+                { label: l.pressureDrop, value: formatValue(totals.pressureDropPa, "Pa", lang, 0), detail: `${l.cleanroomLeakage}: ${formatValue(totals.cleanroomLeakageM3H, "m³/h", lang, 0)}` },
                 { label: l.shaftSize, value: `${formatNumber((totals.indicativeShaftMm || {}).width, lang, 0)} × ${formatNumber((totals.indicativeShaftMm || {}).height, lang, 0)} mm`, detail: `${l.ductDiameter}: ${formatValue(totals.mainDuctDiameterMm, "mm", lang, 0)}` }
             ],
             table: [
                 detailTable(
-                    [l.roomName, l.roomType, l.supply, l.extract, l.ach, l.pressureRole, l.heating, l.cooling, l.productDirection],
+                    [l.roomName, l.roomType, l.supply, l.extract, l.ach, l.pressureRole, l.leakage, l.heating, l.cooling, `${l.humidification}/${l.dehumidification}`, l.productDirection],
                     roomRows
                 ),
                 `<h3>${escapeHtml(l.productDirection)}</h3>`,
