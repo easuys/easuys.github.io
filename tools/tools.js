@@ -184,6 +184,18 @@
     };
 
     const TOOL_TEXT = {
+        hvac: {
+            title: {
+                nl: "HVAC gebouwconcept",
+                en: "HVAC building concept",
+                fr: "Concept HVAC bâtiment"
+            },
+            description: {
+                nl: "Wizard voor volledige gebouwconcepten: ruimtestaat, ventilatie, verwarming, koeling, schachten en cleanroomzones.",
+                en: "Wizard for whole-building concepts: room schedule, ventilation, heating, cooling, shafts and cleanroom zones.",
+                fr: "Assistant pour concepts bâtiment : locaux, ventilation, chauffage, refroidissement, gaines et zones cleanroom."
+            }
+        },
         renovation: {
             title: {
                 nl: "Renovatie quickscan",
@@ -293,7 +305,33 @@
             span: "Overspanning",
             loadChange: "Nieuwe of hogere lasten",
             readiness: "Dossiergereedheid",
-            attention: "Aandachtsniveau"
+            attention: "Aandachtsniveau",
+            buildingConditions: "Gebouwcondities",
+            roomSchedule: "Ruimtestaat",
+            indoorWinter: "Binnen winter",
+            outdoorWinter: "Buiten winter",
+            indoorSummer: "Binnen zomer",
+            outdoorSummer: "Buiten zomer",
+            heatRecovery: "Warmteterugwinning",
+            ductVelocity: "Kanaalsnelheid",
+            defaultUValue: "Gemiddelde U-waarde",
+            pressureOffset: "Drukcascade marge",
+            roomName: "Ruimte",
+            roomType: "Type",
+            height: "Hoogte",
+            occupants: "Personen",
+            exposedArea: "Verliesoppervlak",
+            minAch: "Min. luchtwissels",
+            pressureRole: "Drukrol",
+            cleanroomClass: "Cleanroomklasse",
+            supply: "Toevoer",
+            extract: "Afvoer",
+            outdoorAir: "Buitenlucht",
+            heating: "Verwarming",
+            cooling: "Koeling",
+            ahuFlow: "Luchtgroepdebiet",
+            productDirection: "Productrichting",
+            sourceBasis: "Bronbasis"
         },
         en: {
             indoorTemp: "Indoor temperature",
@@ -341,7 +379,33 @@
             span: "Span",
             loadChange: "New or higher loads",
             readiness: "File readiness",
-            attention: "Attention level"
+            attention: "Attention level",
+            buildingConditions: "Building conditions",
+            roomSchedule: "Room schedule",
+            indoorWinter: "Indoor winter",
+            outdoorWinter: "Outdoor winter",
+            indoorSummer: "Indoor summer",
+            outdoorSummer: "Outdoor summer",
+            heatRecovery: "Heat recovery",
+            ductVelocity: "Duct velocity",
+            defaultUValue: "Average U-value",
+            pressureOffset: "Pressure cascade margin",
+            roomName: "Room",
+            roomType: "Type",
+            height: "Height",
+            occupants: "Occupants",
+            exposedArea: "Exposed area",
+            minAch: "Min. air changes",
+            pressureRole: "Pressure role",
+            cleanroomClass: "Cleanroom class",
+            supply: "Supply",
+            extract: "Extract",
+            outdoorAir: "Outdoor air",
+            heating: "Heating",
+            cooling: "Cooling",
+            ahuFlow: "AHU flow",
+            productDirection: "Product direction",
+            sourceBasis: "Source basis"
         },
         fr: {
             indoorTemp: "Température intérieure",
@@ -389,11 +453,103 @@
             span: "Portée",
             loadChange: "Charges nouvelles ou accrues",
             readiness: "Complétude du dossier",
-            attention: "Niveau d'attention"
+            attention: "Niveau d'attention",
+            buildingConditions: "Conditions bâtiment",
+            roomSchedule: "Tableau des locaux",
+            indoorWinter: "Intérieur hiver",
+            outdoorWinter: "Extérieur hiver",
+            indoorSummer: "Intérieur été",
+            outdoorSummer: "Extérieur été",
+            heatRecovery: "Récupération de chaleur",
+            ductVelocity: "Vitesse gaine",
+            defaultUValue: "Valeur U moyenne",
+            pressureOffset: "Marge cascade pression",
+            roomName: "Local",
+            roomType: "Type",
+            height: "Hauteur",
+            occupants: "Occupants",
+            exposedArea: "Surface déperditive",
+            minAch: "Renouv. min.",
+            pressureRole: "Rôle pression",
+            cleanroomClass: "Classe cleanroom",
+            supply: "Soufflage",
+            extract: "Extraction",
+            outdoorAir: "Air neuf",
+            heating: "Chauffage",
+            cooling: "Refroidissement",
+            ahuFlow: "Débit CTA",
+            productDirection: "Orientation produits",
+            sourceBasis: "Base de sources"
         }
     };
 
     const DEFAULTS = {
+        hvac: {
+            projectName: "Competentiepool concept",
+            indoorWinterTemp: 20,
+            outdoorWinterTemp: -8,
+            indoorSummerTemp: 26,
+            outdoorSummerTemp: 32,
+            heatRecoveryPercent: 75,
+            marginPercent: 15,
+            ductVelocityMS: 4,
+            defaultUValue: 0.45,
+            pressureOffsetPercent: 8,
+            room1Name: "Leslokaal",
+            room1Type: "classroom",
+            room1Area: 60,
+            room1Height: 3.2,
+            room1Occupants: 24,
+            room1Exposed: 45,
+            room1Ach: "",
+            room1Pressure: "neutral",
+            room1CleanroomClass: "",
+            room2Name: "Atelier",
+            room2Type: "workshop",
+            room2Area: 120,
+            room2Height: 4,
+            room2Occupants: 8,
+            room2Exposed: 90,
+            room2Ach: "",
+            room2Pressure: "negative",
+            room2CleanroomClass: "",
+            room3Name: "Cleanroom zone",
+            room3Type: "cleanroom",
+            room3Area: 35,
+            room3Height: 3,
+            room3Occupants: 3,
+            room3Exposed: 25,
+            room3Ach: 25,
+            room3Pressure: "positive",
+            room3CleanroomClass: "ISO 7",
+            room4Name: "Sanitair",
+            room4Type: "sanitary",
+            room4Area: 20,
+            room4Height: 3,
+            room4Occupants: 0,
+            room4Exposed: 8,
+            room4Ach: "",
+            room4Pressure: "negative",
+            room4CleanroomClass: "",
+            room5Name: "Technische ruimte",
+            room5Type: "technical",
+            room5Area: 30,
+            room5Height: 3,
+            room5Occupants: 0,
+            room5Exposed: 12,
+            room5Ach: "",
+            room5Pressure: "negative",
+            room5CleanroomClass: "",
+            room6Name: "",
+            room6Type: "office",
+            room6Area: "",
+            room6Height: 3,
+            room6Occupants: "",
+            room6Exposed: "",
+            room6Ach: "",
+            room6Pressure: "neutral",
+            room6CleanroomClass: ""
+        },
         renovation: {
             projectName: "",
             indoorTemp: 20,
@@ -502,6 +658,23 @@
         ["executionPhasing", { nl: "Fasering en tijdelijke steun bekeken", en: "Phasing and temporary support considered", fr: "Phasage et étaiement provisoire examinés" }]
     ];
 
+    const HVAC_ROOM_TYPES = [
+        ["office", { nl: "Kantoor", en: "Office", fr: "Bureau" }],
+        ["classroom", { nl: "Leslokaal", en: "Classroom", fr: "Salle de cours" }],
+        ["workshop", { nl: "Atelier", en: "Workshop", fr: "Atelier" }],
+        ["multipurpose", { nl: "Polyvalente ruimte", en: "Multipurpose", fr: "Polyvalent" }],
+        ["sanitary", { nl: "Sanitair", en: "Sanitary", fr: "Sanitaire" }],
+        ["storage", { nl: "Berging", en: "Storage", fr: "Stockage" }],
+        ["technical", { nl: "Technische ruimte", en: "Technical room", fr: "Local technique" }],
+        ["cleanroom", { nl: "Cleanroom", en: "Cleanroom", fr: "Cleanroom" }]
+    ];
+
+    const HVAC_PRESSURE_ROLES = [
+        ["neutral", { nl: "Neutraal", en: "Neutral", fr: "Neutre" }],
+        ["positive", { nl: "Overdruk", en: "Positive", fr: "Surpression" }],
+        ["negative", { nl: "Onderdruk", en: "Negative", fr: "Dépression" }]
+    ];
+
     class CalculationError extends Error {
         constructor(messages) {
             super(messages.join("; "));
@@ -511,6 +684,7 @@
 
     const API_BASE_URL = "https://easuys-tools-api.yellow-violet-f185.workers.dev";
     const API_ENDPOINTS = {
+        hvac: "/calculate/hvac-building",
         renovation: "/calculate/renovation",
         shafts: "/calculate/shaft",
         offer: "/calculate/offer",
@@ -558,6 +732,11 @@
 
     const textFor = (dict, lang) => dict[lang] || dict.nl || "";
 
+    const optionLabel = (options, value, lang) => {
+        const found = options.find(([key]) => key === value);
+        return found ? textFor(found[1], lang) : value;
+    };
+
     const appState = {
         lang: "nl",
         activeTool: "renovation",
@@ -586,6 +765,17 @@
             </label>
         `;
     };
+
+    const selectInput = (field, label, value, options, lang) => `
+        <label class="tool-field">
+            <span>${escapeHtml(label)}</span>
+            <select data-field="${field}">
+                ${options.map(([optionValue, labels]) => `
+                    <option value="${escapeHtml(optionValue)}" ${optionValue === value ? "selected" : ""}>${escapeHtml(textFor(labels, lang))}</option>
+                `).join("")}
+            </select>
+        </label>
+    `;
 
     const checkbox = (field, label, checked) => `
         <label class="tool-check">
@@ -661,6 +851,76 @@
                 ${input("volume", l.volume, "m³", d.volume, { min: 0 })}
                 ${input("ach", l.ach, "1/h", d.ach, { min: 0 })}
             </div>
+        `;
+    };
+
+    const renderHvacRoomRows = (defaults, lang) => {
+        const l = LABELS[lang];
+        let rows = "";
+        for (let index = 1; index <= 6; index += 1) {
+            rows += `
+                <tr>
+                    <td><input type="text" data-field="room${index}Name" value="${escapeHtml(defaults[`room${index}Name`])}"></td>
+                    <td>
+                        <select data-field="room${index}Type">
+                            ${HVAC_ROOM_TYPES.map(([value, labels]) => `<option value="${escapeHtml(value)}" ${defaults[`room${index}Type`] === value ? "selected" : ""}>${escapeHtml(textFor(labels, lang))}</option>`).join("")}
+                        </select>
+                    </td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="room${index}Area" value="${escapeHtml(defaults[`room${index}Area`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="2" data-field="room${index}Height" value="${escapeHtml(defaults[`room${index}Height`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="room${index}Occupants" value="${escapeHtml(defaults[`room${index}Occupants`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="room${index}Exposed" value="${escapeHtml(defaults[`room${index}Exposed`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="room${index}Ach" value="${escapeHtml(defaults[`room${index}Ach`])}"></td>
+                    <td>
+                        <select data-field="room${index}Pressure">
+                            ${HVAC_PRESSURE_ROLES.map(([value, labels]) => `<option value="${escapeHtml(value)}" ${defaults[`room${index}Pressure`] === value ? "selected" : ""}>${escapeHtml(textFor(labels, lang))}</option>`).join("")}
+                        </select>
+                    </td>
+                    <td><input type="text" data-field="room${index}CleanroomClass" value="${escapeHtml(defaults[`room${index}CleanroomClass`])}"></td>
+                </tr>
+            `;
+        }
+        return `
+            <div class="table-scroll">
+                <table class="tool-input-table hvac-room-table">
+                    <thead>
+                        <tr>
+                            <th>${escapeHtml(l.roomName)}</th>
+                            <th>${escapeHtml(l.roomType)}</th>
+                            <th>${escapeHtml(l.area)} m²</th>
+                            <th>${escapeHtml(l.height)} m</th>
+                            <th>${escapeHtml(l.occupants)}</th>
+                            <th>${escapeHtml(l.exposedArea)} m²</th>
+                            <th>${escapeHtml(l.minAch)}</th>
+                            <th>${escapeHtml(l.pressureRole)}</th>
+                            <th>${escapeHtml(l.cleanroomClass)}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        `;
+    };
+
+    const renderHvacForm = (lang) => {
+        const d = currentToolDefaults("hvac");
+        const l = LABELS[lang];
+        return `
+            <h3>${escapeHtml(l.buildingConditions)}</h3>
+            <div class="tool-form-grid">
+                ${input("projectName", LANGS[lang].projectName, "", d.projectName, { type: "text" })}
+                ${input("indoorWinterTemp", l.indoorWinter, "°C", d.indoorWinterTemp)}
+                ${input("outdoorWinterTemp", l.outdoorWinter, "°C", d.outdoorWinterTemp)}
+                ${input("indoorSummerTemp", l.indoorSummer, "°C", d.indoorSummerTemp)}
+                ${input("outdoorSummerTemp", l.outdoorSummer, "°C", d.outdoorSummerTemp)}
+                ${input("heatRecoveryPercent", l.heatRecovery, "%", d.heatRecoveryPercent, { min: 0, max: 95 })}
+                ${input("marginPercent", l.renovationMargin, "%", d.marginPercent, { min: 0, max: 100 })}
+                ${input("ductVelocityMS", l.ductVelocity, "m/s", d.ductVelocityMS, { min: 0.5, max: 12 })}
+                ${input("defaultUValue", l.defaultUValue, "W/m²K", d.defaultUValue, { min: 0 })}
+                ${input("pressureOffsetPercent", l.pressureOffset, "%", d.pressureOffsetPercent, { min: 0, max: 30 })}
+            </div>
+            <h3>${escapeHtml(l.roomSchedule)}</h3>
+            ${renderHvacRoomRows(d, lang)}
         `;
     };
 
@@ -774,6 +1034,89 @@
                 : [data && data.error ? data.error : LANGS[lang].apiUnavailable]);
         }
         return data.result || {};
+    };
+
+    const calculateHvac = async (state, lang) => {
+        const l = LABELS[lang];
+        const errors = [];
+        const rooms = [];
+        for (let index = 1; index <= 6; index += 1) {
+            const name = state[`room${index}Name`] || "";
+            const area = optionalNumber(state[`room${index}Area`], `${l.roomName} ${index} ${l.area}`, { min: 0 });
+            const hasRoom = name.trim() || area !== null;
+            if (!hasRoom) continue;
+            if (area === null || area <= 0) {
+                errors.push(`${name || `${l.roomName} ${index}`}: ${l.area}: ${LANGS[lang].missing}`);
+                continue;
+            }
+            const height = optionalNumber(state[`room${index}Height`], `${name} ${l.height}`, { min: 2 }) ?? 3;
+            const occupants = optionalNumber(state[`room${index}Occupants`], `${name} ${l.occupants}`, { min: 0 });
+            const exposed = optionalNumber(state[`room${index}Exposed`], `${name} ${l.exposedArea}`, { min: 0 });
+            const ach = optionalNumber(state[`room${index}Ach`], `${name} ${l.minAch}`, { min: 0 });
+            rooms.push({
+                name: name || `${l.roomName} ${index}`,
+                type: state[`room${index}Type`] || "office",
+                areaM2: area,
+                heightM: height,
+                occupants: occupants ?? -1,
+                exposedAreaM2: exposed ?? undefined,
+                minAch: ach ?? undefined,
+                pressureRole: state[`room${index}Pressure`] || "neutral",
+                cleanroomClass: state[`room${index}CleanroomClass`] || ""
+            });
+        }
+        if (!rooms.length) errors.push(`${l.roomSchedule}: ${LANGS[lang].missing}`);
+        if (errors.length) return { errors, warnings: [] };
+        const result = await postCalculation("hvac", {
+            projectName: state.projectName || "",
+            indoorWinterTemp: requireNumber(state.indoorWinterTemp, l.indoorWinter),
+            outdoorWinterTemp: requireNumber(state.outdoorWinterTemp, l.outdoorWinter),
+            indoorSummerTemp: requireNumber(state.indoorSummerTemp, l.indoorSummer),
+            outdoorSummerTemp: requireNumber(state.outdoorSummerTemp, l.outdoorSummer),
+            heatRecoveryPercent: requireNumber(state.heatRecoveryPercent, l.heatRecovery, { min: 0, max: 95 }),
+            marginPercent: requireNumber(state.marginPercent, l.renovationMargin, { min: 0, max: 100 }),
+            ductVelocityMS: requireNumber(state.ductVelocityMS, l.ductVelocity, { min: 0.5, max: 12 }),
+            defaultUValue: requireNumber(state.defaultUValue, l.defaultUValue, { min: 0 }),
+            pressureOffsetPercent: requireNumber(state.pressureOffsetPercent, l.pressureOffset, { min: 0, max: 30 }),
+            rooms
+        }, lang);
+        const totals = result.totals || {};
+        const roomRows = (result.rooms || []).map((room) => [
+            room.name,
+            room.templateLabel || room.type,
+            formatValue(room.supplyM3H, "m³/h", lang, 0),
+            formatValue(room.extractM3H, "m³/h", lang, 0),
+            formatValue(room.ach, "1/h", lang, 1),
+            optionLabel(HVAC_PRESSURE_ROLES, room.pressureRole, lang),
+            formatValue(room.heatingW / 1000, "kW", lang, 1),
+            formatValue(room.coolingW / 1000, "kW", lang, 1),
+            room.filterConcept || ""
+        ]);
+        const productRows = (result.productReferences || []).map((item) => [
+            item.family,
+            item.examples,
+            item.url,
+            item.note
+        ]);
+        const roomWarnings = (result.rooms || []).flatMap((room) => (room.warnings || []).map((warning) => `${room.name}: ${warning}`));
+        return {
+            warnings: (result.warnings || []).concat(roomWarnings),
+            cards: [
+                { label: l.ahuFlow, value: formatValue(totals.supplyM3H, "m³/h", lang, 0), detail: `${l.extract}: ${formatValue(totals.extractM3H, "m³/h", lang, 0)}` },
+                { label: l.outdoorAir, value: formatValue(totals.outdoorAirM3H, "m³/h", lang, 0), detail: `${l.heatRecovery} ${formatValue((result.conditions || {}).heatRecoveryPercent, "%", lang, 0)}` },
+                { label: l.heating, value: formatValue(totals.heatingKw, "kW", lang, 1), detail: "concept" },
+                { label: l.cooling, value: formatValue(totals.coolingKw, "kW", lang, 1), detail: "concept" },
+                { label: l.shaftSize, value: `${formatNumber((totals.indicativeShaftMm || {}).width, lang, 0)} × ${formatNumber((totals.indicativeShaftMm || {}).height, lang, 0)} mm`, detail: `${l.ductDiameter}: ${formatValue(totals.mainDuctDiameterMm, "mm", lang, 0)}` }
+            ],
+            table: [
+                detailTable(
+                    [l.roomName, l.roomType, l.supply, l.extract, l.ach, l.pressureRole, l.heating, l.cooling, l.productDirection],
+                    roomRows
+                ),
+                `<h3>${escapeHtml(l.productDirection)}</h3>`,
+                detailTable([LANGS[lang].note, "Voorbeelden", "URL", "Status"], productRows)
+            ].join("")
+        };
     };
 
     const calculateRenovation = async (state, lang) => {
@@ -976,6 +1319,7 @@
     };
 
     const calculators = {
+        hvac: calculateHvac,
         renovation: calculateRenovation,
         shafts: calculateShafts,
         offer: calculateOffer,
@@ -984,6 +1328,7 @@
     };
 
     const formRenderers = {
+        hvac: renderHvacForm,
         renovation: renderRenovationForm,
         shafts: renderShaftForm,
         offer: renderOfferForm,
@@ -1085,7 +1430,7 @@
         const app = document.querySelector("[data-tool-app]");
         if (!app) return;
         appState.lang = app.dataset.lang || "nl";
-        appState.activeTool = "renovation";
+        appState.activeTool = "hvac";
         document.querySelector("[data-tool-page-title]").textContent = LANGS[appState.lang].pageTitle;
         document.querySelector("[data-tool-page-intro]").textContent = LANGS[appState.lang].intro;
         document.querySelector("[data-disclaimer-title]").textContent = LANGS[appState.lang].disclaimerTitle;

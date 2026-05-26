@@ -167,7 +167,9 @@
 }
 
 .tool-field input,
-.tool-input-table input {
+.tool-field select,
+.tool-input-table input,
+.tool-input-table select {
     width: 100%;
     min-width: 0;
     border: 1px solid var(--line);
@@ -215,6 +217,10 @@
     width: 100%;
     border-collapse: collapse;
     min-width: 560px;
+}
+
+.hvac-room-table {
+    min-width: 1120px;
 }
 
 .tool-input-table th,
