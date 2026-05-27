@@ -187,7 +187,7 @@
     };
 
     const TOOL_TEXT = {
-        hvac: {
+        conceptcheck: {
             title: {
                 nl: "Gebouwtechnieken conceptcheck",
                 en: "Building-services concept check",
@@ -197,6 +197,18 @@
                 nl: "Eerste conceptscreening voor ventilatie, verwarming, koeling, schachten, druk-/geluidsrisico en technische zones.",
                 en: "First concept screening for ventilation, heating, cooling, shafts, pressure/noise risk and technical zones.",
                 fr: "Premier screening conceptuel pour ventilation, chauffage, refroidissement, gaines, pression/bruit et zones techniques."
+            }
+        },
+        hvac: {
+            title: {
+                nl: "HVAC ruimtestaat",
+                en: "HVAC room schedule",
+                fr: "Tableau locaux HVAC"
+            },
+            description: {
+                nl: "Detailwizard voor ruimtestaat, ventilatie, verwarming, koeling, luchtgroepen en cleanroomzones.",
+                en: "Detailed wizard for room schedules, ventilation, heating, cooling, AHUs and cleanroom zones.",
+                fr: "Assistant détaillé pour locaux, ventilation, chauffage, refroidissement, CTA et zones cleanroom."
             }
         },
         renovation: {
@@ -335,6 +347,24 @@
             ahuFlow: "Luchtgroepdebiet",
             productDirection: "Productrichting",
             sourceBasis: "Bronbasis",
+            buildingType: "Gebouwtype",
+            grossArea: "Bruto-oppervlakte",
+            netArea: "Netto-oppervlakte",
+            numberOfZones: "Aantal zones",
+            workshopZones: "Atelier/proceszones",
+            desiredComfort: "Comfortniveau",
+            availableShaft: "Beschikbare schacht",
+            shaftWidth: "Schachtbreedte",
+            shaftDepth: "Schachtdiepte",
+            plantRoom: "Technisch lokaal",
+            plantRoomWidth: "Breedte lokaal",
+            plantRoomLength: "Lengte lokaal",
+            pressureRisk: "Drukrisico",
+            missingInputs: "Ontbrekende invoer",
+            recommendation: "Aanbeveling",
+            conceptStatus: "Conceptstatus",
+            ahuSplit: "Luchtgroepindeling",
+            constraintCheck: "Constraintcheck",
             indoorWinterRh: "RV binnen winter",
             outdoorWinterRh: "RV buiten winter",
             indoorSummerRh: "RV binnen zomer",
@@ -440,6 +470,24 @@
             ahuFlow: "AHU flow",
             productDirection: "Product direction",
             sourceBasis: "Source basis",
+            buildingType: "Building type",
+            grossArea: "Gross area",
+            netArea: "Net area",
+            numberOfZones: "Number of zones",
+            workshopZones: "Workshop/process zones",
+            desiredComfort: "Comfort level",
+            availableShaft: "Available shaft",
+            shaftWidth: "Shaft width",
+            shaftDepth: "Shaft depth",
+            plantRoom: "Plant room",
+            plantRoomWidth: "Room width",
+            plantRoomLength: "Room length",
+            pressureRisk: "Pressure risk",
+            missingInputs: "Missing input",
+            recommendation: "Recommendation",
+            conceptStatus: "Concept status",
+            ahuSplit: "AHU split",
+            constraintCheck: "Constraint check",
             indoorWinterRh: "Indoor RH winter",
             outdoorWinterRh: "Outdoor RH winter",
             indoorSummerRh: "Indoor RH summer",
@@ -545,6 +593,24 @@
             ahuFlow: "Débit CTA",
             productDirection: "Orientation produits",
             sourceBasis: "Base de sources",
+            buildingType: "Type de bâtiment",
+            grossArea: "Surface brute",
+            netArea: "Surface nette",
+            numberOfZones: "Nombre de zones",
+            workshopZones: "Ateliers/process",
+            desiredComfort: "Niveau de confort",
+            availableShaft: "Gaine disponible",
+            shaftWidth: "Largeur gaine",
+            shaftDepth: "Profondeur gaine",
+            plantRoom: "Local technique",
+            plantRoomWidth: "Largeur local",
+            plantRoomLength: "Longueur local",
+            pressureRisk: "Risque pression",
+            missingInputs: "Entrées manquantes",
+            recommendation: "Recommandation",
+            conceptStatus: "Statut concept",
+            ahuSplit: "Répartition CTA",
+            constraintCheck: "Contrôle contraintes",
             indoorWinterRh: "HR intérieur hiver",
             outdoorWinterRh: "HR extérieur hiver",
             indoorSummerRh: "HR intérieur été",
@@ -580,6 +646,25 @@
     };
 
     const DEFAULTS = {
+        conceptcheck: {
+            projectName: "Gebouwtechnieken conceptcheck",
+            buildingType: "school",
+            grossAreaM2: 650,
+            netAreaM2: 520,
+            numberOfZones: 5,
+            occupancy: 75,
+            workshopProcessZones: true,
+            ventilationTargetAch: 3,
+            indoorWinterTemp: 20,
+            outdoorWinterTemp: -8,
+            indoorSummerTemp: 26,
+            outdoorSummerTemp: 32,
+            desiredComfortLevel: "standard",
+            availableShaftWidthMm: 900,
+            availableShaftDepthMm: 700,
+            plantRoomWidthM: 4,
+            plantRoomLengthM: 5
+        },
         hvac: {
             projectName: "Concept",
             indoorWinterTemp: 20,
@@ -779,6 +864,20 @@
         ["negative", { nl: "Onderdruk", en: "Negative", fr: "Dépression" }]
     ];
 
+    const BUILDING_TYPES = [
+        ["school", { nl: "School / publiek gebouw", en: "School / public building", fr: "École / bâtiment public" }],
+        ["training_center", { nl: "Opleidingscentrum", en: "Training center", fr: "Centre de formation" }],
+        ["office", { nl: "Kantoor", en: "Office", fr: "Bureau" }],
+        ["sports_public", { nl: "Sport / sanitair publiek", en: "Sports / sanitary public", fr: "Sport / sanitaires public" }],
+        ["renovation_mixed", { nl: "Gemengde renovatie", en: "Mixed renovation", fr: "Rénovation mixte" }]
+    ];
+
+    const COMFORT_LEVELS = [
+        ["basic", { nl: "Basis", en: "Basic", fr: "Base" }],
+        ["standard", { nl: "Standaard", en: "Standard", fr: "Standard" }],
+        ["high", { nl: "Hoog comfort", en: "High comfort", fr: "Confort élevé" }]
+    ];
+
     class CalculationError extends Error {
         constructor(messages) {
             super(messages.join("; "));
@@ -788,6 +887,7 @@
 
     const API_BASE_URL = "https://easuys-tools-api.yellow-violet-f185.workers.dev";
     const API_ENDPOINTS = {
+        conceptcheck: "/calculate/building-tech-conceptcheck",
         hvac: "/calculate/hvac-building",
         renovation: "/calculate/renovation",
         shafts: "/calculate/shaft",
@@ -846,6 +946,15 @@
             nl: { laag: "laag", matig: "matig", hoog: "hoog" },
             en: { laag: "low", matig: "medium", hoog: "high" },
             fr: { laag: "faible", matig: "moyen", hoog: "élevé" }
+        };
+        return (levels[lang] || levels.nl)[level] || level || "-";
+    };
+
+    const riskLevelLabel = (level, lang) => {
+        const levels = {
+            nl: { low: "laag", medium: "matig", high: "hoog", fits_indicatively: "past indicatief", too_small: "te klein" },
+            en: { low: "low", medium: "medium", high: "high", fits_indicatively: "fits indicatively", too_small: "too small" },
+            fr: { low: "faible", medium: "moyen", high: "élevé", fits_indicatively: "convient indicativement", too_small: "trop petit" }
         };
         return (levels[lang] || levels.nl)[level] || level || "-";
     };
@@ -1015,6 +1124,42 @@
         `;
     };
 
+    const renderConceptcheckForm = (lang) => {
+        const d = currentToolDefaults("conceptcheck");
+        const l = LABELS[lang];
+        return `
+            <h3>${escapeHtml(l.buildingConditions)}</h3>
+            <div class="tool-form-grid">
+                ${input("projectName", LANGS[lang].projectName, "", d.projectName, { type: "text" })}
+                ${selectInput("buildingType", l.buildingType, d.buildingType, BUILDING_TYPES, lang)}
+                ${input("grossAreaM2", l.grossArea, "m²", d.grossAreaM2, { min: 1 })}
+                ${input("netAreaM2", l.netArea, "m²", d.netAreaM2, { min: 1 })}
+                ${input("numberOfZones", l.numberOfZones, "", d.numberOfZones, { min: 1, step: 1 })}
+                ${input("occupancy", l.occupants, "", d.occupancy, { min: 0 })}
+                ${input("ventilationTargetAch", l.ach, "1/h", d.ventilationTargetAch, { min: 0 })}
+                ${selectInput("desiredComfortLevel", l.desiredComfort, d.desiredComfortLevel, COMFORT_LEVELS, lang)}
+            </div>
+            <div class="tool-check-grid">${checkbox("workshopProcessZones", l.workshopZones, d.workshopProcessZones)}</div>
+            <h3>${escapeHtml(l.heating)} / ${escapeHtml(l.cooling)}</h3>
+            <div class="tool-form-grid">
+                ${input("indoorWinterTemp", l.indoorWinter, "°C", d.indoorWinterTemp)}
+                ${input("outdoorWinterTemp", l.outdoorWinter, "°C", d.outdoorWinterTemp)}
+                ${input("indoorSummerTemp", l.indoorSummer, "°C", d.indoorSummerTemp)}
+                ${input("outdoorSummerTemp", l.outdoorSummer, "°C", d.outdoorSummerTemp)}
+            </div>
+            <h3>${escapeHtml(l.availableShaft)}</h3>
+            <div class="tool-form-grid">
+                ${input("availableShaftWidthMm", l.shaftWidth, "mm", d.availableShaftWidthMm, { min: 0 })}
+                ${input("availableShaftDepthMm", l.shaftDepth, "mm", d.availableShaftDepthMm, { min: 0 })}
+            </div>
+            <h3>${escapeHtml(l.plantRoom)}</h3>
+            <div class="tool-form-grid">
+                ${input("plantRoomWidthM", l.plantRoomWidth, "m", d.plantRoomWidthM, { min: 0 })}
+                ${input("plantRoomLengthM", l.plantRoomLength, "m", d.plantRoomLengthM, { min: 0 })}
+            </div>
+        `;
+    };
+
     const renderHvacForm = (lang) => {
         const d = currentToolDefaults("hvac");
         const l = LABELS[lang];
@@ -1162,6 +1307,74 @@
                 : [data && data.error ? data.error : LANGS[lang].apiUnavailable]);
         }
         return data.result || {};
+    };
+
+    const calculateConceptcheck = async (state, lang) => {
+        const l = LABELS[lang];
+        const result = await postCalculation("conceptcheck", {
+            projectName: state.projectName || "",
+            buildingType: state.buildingType || "school",
+            grossAreaM2: optionalNumber(state.grossAreaM2, l.grossArea, { min: 1 }) ?? undefined,
+            netAreaM2: requireNumber(state.netAreaM2, l.netArea, { min: 1 }),
+            numberOfZones: Math.max(1, Math.round(requireNumber(state.numberOfZones, l.numberOfZones, { min: 1 }))),
+            occupancy: requireNumber(state.occupancy, l.occupants, { min: 0 }),
+            workshopProcessZones: Boolean(state.workshopProcessZones),
+            ventilationTargetAch: requireNumber(state.ventilationTargetAch, l.ach, { min: 0 }),
+            desiredComfortLevel: state.desiredComfortLevel || "standard",
+            indoorWinterTemp: requireNumber(state.indoorWinterTemp, l.indoorWinter),
+            outdoorWinterTemp: requireNumber(state.outdoorWinterTemp, l.outdoorWinter),
+            indoorSummerTemp: requireNumber(state.indoorSummerTemp, l.indoorSummer),
+            outdoorSummerTemp: requireNumber(state.outdoorSummerTemp, l.outdoorSummer),
+            availableShaftWidthMm: optionalNumber(state.availableShaftWidthMm, l.shaftWidth, { min: 0 }) ?? 0,
+            availableShaftDepthMm: optionalNumber(state.availableShaftDepthMm, l.shaftDepth, { min: 0 }) ?? 0,
+            plantRoomWidthM: optionalNumber(state.plantRoomWidthM, l.plantRoomWidth, { min: 0 }) ?? 0,
+            plantRoomLengthM: optionalNumber(state.plantRoomLengthM, l.plantRoomLength, { min: 0 }) ?? 0
+        }, lang);
+        const outputs = result.outputs || {};
+        const shaftFit = outputs.shaftFit || null;
+        const plantRoom = outputs.plantRoomCheck || null;
+        const ahuRows = (outputs.roughAhuSplit || []).map((group) => [
+            group.group,
+            (group.rooms || []).join(", "),
+            formatValue(group.supplyM3H, "m³/h", lang, 0),
+            formatValue(group.extractM3H, "m³/h", lang, 0),
+            group.rationale
+        ]);
+        const constraintRows = [
+            shaftFit ? [
+                l.availableShaft,
+                `${formatNumber(shaftFit.availableWidthMm, lang, 0)} × ${formatNumber(shaftFit.availableDepthMm, lang, 0)} mm`,
+                `${formatValue(shaftFit.availableAreaM2, "m²", lang, 2)} / ${formatValue(shaftFit.requiredAreaM2, "m²", lang, 2)}`,
+                riskLevelLabel(shaftFit.status, lang)
+            ] : null,
+            plantRoom ? [
+                l.plantRoom,
+                formatValue(plantRoom.roomAreaM2, "m²", lang, 1),
+                formatValue(plantRoom.requiredServiceAreaM2, "m²", lang, 1),
+                riskLevelLabel(plantRoom.risk, lang)
+            ] : null
+        ].filter(Boolean);
+        const warnings = []
+            .concat(outputs.constraintWarnings || [])
+            .concat((outputs.missingInputs || []).map((item) => `${l.missingInputs}: ${item}`));
+        return {
+            warnings,
+            cards: [
+                { label: l.conceptStatus, value: result.resultLabel || "concept", detail: result.formulaVersion || "" },
+                { label: l.ahuFlow, value: formatValue(outputs.totalSupplyM3H, "m³/h", lang, 0), detail: `${l.extract}: ${formatValue(outputs.totalExtractM3H, "m³/h", lang, 0)}` },
+                { label: l.heating, value: formatValue(outputs.heatingOrderKw, "kW", lang, 1), detail: "orde van grootte" },
+                { label: l.cooling, value: formatValue(outputs.coolingOrderKw, "kW", lang, 1), detail: "incl. vocht/fan" },
+                { label: l.shaftSize, value: formatValue(outputs.shaftAreaOrderM2, "m²", lang, 2), detail: shaftFit ? riskLevelLabel(shaftFit.status, lang) : l.availableShaft },
+                { label: l.pressureRisk, value: riskLevelLabel(outputs.pressureRisk, lang), detail: `${l.soundRisk}: ${soundLevelLabel(outputs.noiseRisk, lang)}` },
+                { label: l.missingInputs, value: String((outputs.missingInputs || []).length), detail: outputs.recommendation || "" }
+            ],
+            table: [
+                `<h3>${escapeHtml(l.ahuSplit)}</h3>`,
+                detailTable([l.role, l.roomSchedule, l.supply, l.extract, LANGS[lang].note], ahuRows),
+                constraintRows.length ? `<h3>${escapeHtml(l.constraintCheck)}</h3>${detailTable([l.component, LANGS[lang].value, l.sourceBasis, l.status], constraintRows)}` : "",
+                `<h3>${escapeHtml(l.recommendation)}</h3><p>${escapeHtml(outputs.recommendation || "")}</p>`
+            ].join("")
+        };
     };
 
     const calculateHvac = async (state, lang) => {
@@ -1475,6 +1688,7 @@
     };
 
     const calculators = {
+        conceptcheck: calculateConceptcheck,
         hvac: calculateHvac,
         renovation: calculateRenovation,
         shafts: calculateShafts,
@@ -1484,6 +1698,7 @@
     };
 
     const formRenderers = {
+        conceptcheck: renderConceptcheckForm,
         hvac: renderHvacForm,
         renovation: renderRenovationForm,
         shafts: renderShaftForm,
@@ -1601,7 +1816,7 @@
         const app = document.querySelector("[data-tool-app]");
         if (!app) return;
         appState.lang = app.dataset.lang || "nl";
-        appState.activeTool = "hvac";
+        appState.activeTool = "conceptcheck";
         document.querySelector("[data-tool-page-title]").textContent = LANGS[appState.lang].pageTitle;
         document.querySelector("[data-tool-page-intro]").textContent = LANGS[appState.lang].intro;
         document.querySelector("[data-disclaimer-title]").textContent = LANGS[appState.lang].disclaimerTitle;
