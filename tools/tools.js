@@ -244,6 +244,18 @@
                 fr: "Vérifie si les appareils et zones de maintenance tiennent indicativement dans un local technique."
             }
         },
+        roofLoad: {
+            title: {
+                nl: "Daklasten technieken",
+                en: "Roof plant loads",
+                fr: "Charges toiture techniques"
+            },
+            description: {
+                nl: "Checklist voor daktoestellen: steunoppervlak, indicatieve belasting, wind en coördinatiepunten.",
+                en: "Checklist for roof plant: support area, indicative load, wind and coordination points.",
+                fr: "Checklist pour équipements en toiture : appuis, charge indicative, vent et coordination."
+            }
+        },
         hvac: {
             title: {
                 nl: "HVAC ruimtestaat",
@@ -462,7 +474,14 @@
             serviceFront: "Onderhoud vooraan",
             serviceSide: "Onderhoud zijkant",
             requiredServiceArea: "Benodigde servicezone",
-            fitRatio: "Vullingsgraad"
+            fitRatio: "Vullingsgraad",
+            allowableLoad: "Toelaatbare daklast",
+            windExposed: "Windblootstelling",
+            equipmentWeight: "Gewicht toestel",
+            supportArea: "Steunoppervlak",
+            roofLoad: "Dakbelasting",
+            totalWeight: "Totaal gewicht",
+            checklist: "Checklist"
         },
         en: {
             indoorTemp: "Indoor temperature",
@@ -607,7 +626,14 @@
             serviceFront: "Front service",
             serviceSide: "Side service",
             requiredServiceArea: "Required service area",
-            fitRatio: "Fit ratio"
+            fitRatio: "Fit ratio",
+            allowableLoad: "Allowable roof load",
+            windExposed: "Wind exposure",
+            equipmentWeight: "Equipment weight",
+            supportArea: "Support area",
+            roofLoad: "Roof load",
+            totalWeight: "Total weight",
+            checklist: "Checklist"
         },
         fr: {
             indoorTemp: "Température intérieure",
@@ -752,7 +778,14 @@
             serviceFront: "Maintenance avant",
             serviceSide: "Maintenance côté",
             requiredServiceArea: "Zone maintenance requise",
-            fitRatio: "Taux occupation"
+            fitRatio: "Taux occupation",
+            allowableLoad: "Charge toiture admissible",
+            windExposed: "Exposition vent",
+            equipmentWeight: "Poids appareil",
+            supportArea: "Surface d'appui",
+            roofLoad: "Charge toiture",
+            totalWeight: "Poids total",
+            checklist: "Checklist"
         }
     };
 
@@ -847,6 +880,20 @@
             equipment4LengthM: "",
             equipment4ServiceFrontM: 0.8,
             equipment4ServiceSideM: 0.4
+        },
+        roofLoad: {
+            projectName: "Daktoestellen",
+            allowableLoadKgM2: 150,
+            windExposed: true,
+            roofEquipment1Label: "Warmtepomp",
+            roofEquipment1WeightKg: 420,
+            roofEquipment1SupportAreaM2: 2.4,
+            roofEquipment2Label: "Luchtgroep",
+            roofEquipment2WeightKg: 950,
+            roofEquipment2SupportAreaM2: 6.5,
+            roofEquipment3Label: "",
+            roofEquipment3WeightKg: "",
+            roofEquipment3SupportAreaM2: ""
         },
         hvac: {
             projectName: "Concept",
@@ -1112,6 +1159,7 @@
         projectIntake: "/calculate/project-intake-checklist",
         grilleNoise: "/calculate/grille-noise-risk",
         plantFit: "/calculate/plant-room-clearance",
+        roofLoad: "/calculate/roof-plant-interface",
         hvac: "/calculate/hvac-building",
         renovation: "/calculate/renovation",
         shafts: "/calculate/shaft",
@@ -1179,9 +1227,9 @@
 
     const riskLevelLabel = (level, lang) => {
         const levels = {
-            nl: { low: "laag", medium: "matig", high: "hoog", fits_indicatively: "past indicatief", too_small: "te klein" },
-            en: { low: "low", medium: "medium", high: "high", fits_indicatively: "fits indicatively", too_small: "too small" },
-            fr: { low: "faible", medium: "moyen", high: "élevé", fits_indicatively: "convient indicativement", too_small: "trop petit" }
+            nl: { low: "laag", medium: "matig", high: "hoog", fits_indicatively: "past indicatief", too_small: "te klein", coordination_required: "coördinatie nodig" },
+            en: { low: "low", medium: "medium", high: "high", fits_indicatively: "fits indicatively", too_small: "too small", coordination_required: "coordination required" },
+            fr: { low: "faible", medium: "moyen", high: "élevé", fits_indicatively: "convient indicativement", too_small: "trop petit", coordination_required: "coordination requise" }
         };
         return (levels[lang] || levels.nl)[level] || level || "-";
     };
@@ -1469,6 +1517,48 @@
             </div>
             <h3>${escapeHtml(l.equipment)}</h3>
             ${renderPlantEquipmentRows(d, lang)}
+        `;
+    };
+
+    const renderRoofEquipmentRows = (defaults, lang) => {
+        const l = LABELS[lang];
+        let rows = "";
+        for (let index = 1; index <= 3; index += 1) {
+            rows += `
+                <tr>
+                    <td><input type="text" data-field="roofEquipment${index}Label" value="${escapeHtml(defaults[`roofEquipment${index}Label`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="roofEquipment${index}WeightKg" value="${escapeHtml(defaults[`roofEquipment${index}WeightKg`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="roofEquipment${index}SupportAreaM2" value="${escapeHtml(defaults[`roofEquipment${index}SupportAreaM2`])}"></td>
+                </tr>
+            `;
+        }
+        return `
+            <div class="table-scroll">
+                <table class="tool-input-table">
+                    <thead>
+                        <tr>
+                            <th>${escapeHtml(l.equipmentLabel)}</th>
+                            <th>${escapeHtml(l.equipmentWeight)} kg</th>
+                            <th>${escapeHtml(l.supportArea)} m²</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        `;
+    };
+
+    const renderRoofLoadForm = (lang) => {
+        const d = currentToolDefaults("roofLoad");
+        const l = LABELS[lang];
+        return `
+            <div class="tool-form-grid">
+                ${input("projectName", LANGS[lang].projectName, "", d.projectName, { type: "text" })}
+                ${input("allowableLoadKgM2", l.allowableLoad, "kg/m²", d.allowableLoadKgM2, { min: 0 })}
+            </div>
+            <div class="tool-check-grid">${checkbox("windExposed", l.windExposed, d.windExposed)}</div>
+            <h3>${escapeHtml(l.equipment)}</h3>
+            ${renderRoofEquipmentRows(d, lang)}
         `;
     };
 
@@ -1826,6 +1916,57 @@
         };
     };
 
+    const calculateRoofLoad = async (state, lang) => {
+        const l = LABELS[lang];
+        const errors = [];
+        const equipment = [];
+        for (let index = 1; index <= 3; index += 1) {
+            const label = state[`roofEquipment${index}Label`] || "";
+            const weight = optionalNumber(state[`roofEquipment${index}WeightKg`], `${label || l.equipmentLabel} ${l.equipmentWeight}`, { min: 0 });
+            const supportArea = optionalNumber(state[`roofEquipment${index}SupportAreaM2`], `${label || l.equipmentLabel} ${l.supportArea}`, { min: 0 });
+            const hasEquipment = label.trim() || weight !== null || supportArea !== null;
+            if (!hasEquipment) continue;
+            if (!label.trim()) errors.push(`${l.equipmentLabel} ${index}: ${LANGS[lang].missing}`);
+            if (weight === null || weight <= 0) errors.push(`${label || l.equipmentLabel} ${l.equipmentWeight}: ${LANGS[lang].missing}`);
+            if (supportArea === null || supportArea <= 0) errors.push(`${label || l.equipmentLabel} ${l.supportArea}: ${LANGS[lang].missing}`);
+            if (label.trim() && weight !== null && weight > 0 && supportArea !== null && supportArea > 0) {
+                equipment.push({
+                    label,
+                    weightKg: weight,
+                    supportAreaM2: supportArea
+                });
+            }
+        }
+        if (!equipment.length) errors.push(`${l.equipment}: ${LANGS[lang].missing}`);
+        if (errors.length) return { errors, warnings: [] };
+        const allowableLoadKgM2 = requireNumber(state.allowableLoadKgM2, l.allowableLoad, { min: 0.1 });
+        const result = await postCalculation("roofLoad", {
+            allowableLoadKgM2,
+            windExposed: Boolean(state.windExposed),
+            equipment
+        }, lang);
+        const equipmentRows = (result.equipment || []).map((item) => [
+            item.label,
+            formatValue(item.weightKg, "kg", lang, 0),
+            formatValue(item.supportAreaM2, "m²", lang, 2),
+            formatValue(item.loadKgM2, "kg/m²", lang, 0),
+            item.exceedsIndicativeLimit ? LANGS[lang].warnings : LANGS[lang].ok
+        ]);
+        const checklistRows = (result.checklist || []).map((item) => [item]);
+        return {
+            warnings: result.warnings || [],
+            cards: [
+                { label: l.status, value: riskLevelLabel(result.risk, lang), detail: result.risk || "" },
+                { label: l.totalWeight, value: formatValue(result.totalWeightKg, "kg", lang, 0), detail: `${l.allowableLoad}: ${formatValue(result.allowableLoadKgM2, "kg/m²", lang, 0)}` },
+                { label: l.equipment, value: String((result.equipment || []).length), detail: state.windExposed ? l.windExposed : "" }
+            ],
+            table: [
+                detailTable([l.equipmentLabel, l.equipmentWeight, l.supportArea, l.roofLoad, l.status], equipmentRows),
+                checklistRows.length ? `<h3>${escapeHtml(l.checklist)}</h3>${detailTable([LANGS[lang].note], checklistRows)}` : ""
+            ].join("")
+        };
+    };
+
     const calculateHvac = async (state, lang) => {
         const l = LABELS[lang];
         const errors = [];
@@ -2141,6 +2282,7 @@
         projectIntake: calculateProjectIntake,
         grilleNoise: calculateGrilleNoise,
         plantFit: calculatePlantFit,
+        roofLoad: calculateRoofLoad,
         hvac: calculateHvac,
         renovation: calculateRenovation,
         shafts: calculateShafts,
@@ -2154,6 +2296,7 @@
         projectIntake: renderProjectIntakeForm,
         grilleNoise: renderGrilleNoiseForm,
         plantFit: renderPlantFitForm,
+        roofLoad: renderRoofLoadForm,
         hvac: renderHvacForm,
         renovation: renderRenovationForm,
         shafts: renderShaftForm,
