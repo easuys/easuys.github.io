@@ -220,6 +220,18 @@
                 fr: "Checklist sans upload pour architectes : données manquantes, interfaces feu/gaines, maintenance et préparation quickscan."
             }
         },
+        grilleNoise: {
+            title: {
+                nl: "Rooster geluidsrisico",
+                en: "Grille noise risk",
+                fr: "Risque bruit grille"
+            },
+            description: {
+                nl: "Snelle risico-inschatting voor rooster vrije doorlaat, frontsnelheid, drukverlies en kamergeluidsmarge.",
+                en: "Quick risk screening for grille free area, face velocity, pressure drop and room noise margin.",
+                fr: "Screening rapide de surface libre, vitesse frontale, perte de charge et marge acoustique local."
+            }
+        },
         hvac: {
             title: {
                 nl: "HVAC ruimtestaat",
@@ -416,7 +428,21 @@
             examples: "Voorbeelden",
             link: "Link",
             status: "Status",
-            openLink: "Open fiche"
+            openLink: "Open fiche",
+            grilleWidth: "Roosterbreedte",
+            grilleHeight: "Roosterhoogte",
+            freeAreaRatio: "Vrije doorlaat",
+            freeArea: "Vrije oppervlakte",
+            roomTarget: "Ruimterichtwaarde",
+            roomAbsorption: "Ruimteabsorptie",
+            distance: "Afstand",
+            roomUse: "Ruimtegebruik",
+            faceVelocity: "Frontsnelheid",
+            terminalPressureDrop: "Roosterdrukverlies",
+            estimatedSoundPower: "Geschat geluidvermogen",
+            estimatedRoomLevel: "Geschat ruimteniveau",
+            noiseMargin: "Geluidsmarge",
+            manufacturerCheck: "Fabrikantcontrole"
         },
         en: {
             indoorTemp: "Indoor temperature",
@@ -539,7 +565,21 @@
             examples: "Examples",
             link: "Link",
             status: "Status",
-            openLink: "Open sheet"
+            openLink: "Open sheet",
+            grilleWidth: "Grille width",
+            grilleHeight: "Grille height",
+            freeAreaRatio: "Free area ratio",
+            freeArea: "Free area",
+            roomTarget: "Room target",
+            roomAbsorption: "Room absorption",
+            distance: "Distance",
+            roomUse: "Room use",
+            faceVelocity: "Face velocity",
+            terminalPressureDrop: "Grille pressure drop",
+            estimatedSoundPower: "Estimated sound power",
+            estimatedRoomLevel: "Estimated room level",
+            noiseMargin: "Noise margin",
+            manufacturerCheck: "Manufacturer check"
         },
         fr: {
             indoorTemp: "Température intérieure",
@@ -662,7 +702,21 @@
             examples: "Exemples",
             link: "Lien",
             status: "Statut",
-            openLink: "Ouvrir fiche"
+            openLink: "Ouvrir fiche",
+            grilleWidth: "Largeur grille",
+            grilleHeight: "Hauteur grille",
+            freeAreaRatio: "Taux surface libre",
+            freeArea: "Surface libre",
+            roomTarget: "Objectif local",
+            roomAbsorption: "Absorption local",
+            distance: "Distance",
+            roomUse: "Usage local",
+            faceVelocity: "Vitesse frontale",
+            terminalPressureDrop: "Perte grille",
+            estimatedSoundPower: "Puissance sonore estimée",
+            estimatedRoomLevel: "Niveau local estimé",
+            noiseMargin: "Marge acoustique",
+            manufacturerCheck: "Contrôle fabricant"
         }
     };
 
@@ -720,6 +774,18 @@
             budgetRange: false,
             targetDate: false,
             publicTenderRequirements: false
+        },
+        grilleNoise: {
+            projectName: "Rooster quickscan",
+            roomType: "classroom",
+            airflowM3H: 650,
+            grilleWidthMm: 500,
+            grilleHeightMm: 150,
+            freeAreaRatio: 0.55,
+            pressureDropPa: 55,
+            roomTargetDbA: 35,
+            distanceM: 2.5,
+            roomAbsorptionM2: 12
         },
         hvac: {
             projectName: "Concept",
@@ -983,6 +1049,7 @@
     const API_ENDPOINTS = {
         conceptcheck: "/calculate/building-tech-conceptcheck",
         projectIntake: "/calculate/project-intake-checklist",
+        grilleNoise: "/calculate/grille-noise-risk",
         hvac: "/calculate/hvac-building",
         renovation: "/calculate/renovation",
         shafts: "/calculate/shaft",
@@ -1278,6 +1345,25 @@
         `;
     };
 
+    const renderGrilleNoiseForm = (lang) => {
+        const d = currentToolDefaults("grilleNoise");
+        const l = LABELS[lang];
+        return `
+            <div class="tool-form-grid">
+                ${input("projectName", LANGS[lang].projectName, "", d.projectName, { type: "text" })}
+                ${input("roomType", l.roomUse, "", d.roomType, { type: "text" })}
+                ${input("airflowM3H", l.airFlow, "m³/h", d.airflowM3H, { min: 0 })}
+                ${input("grilleWidthMm", l.grilleWidth, "mm", d.grilleWidthMm, { min: 1 })}
+                ${input("grilleHeightMm", l.grilleHeight, "mm", d.grilleHeightMm, { min: 1 })}
+                ${input("freeAreaRatio", l.freeAreaRatio, "", d.freeAreaRatio, { min: 0.1, max: 1 })}
+                ${input("pressureDropPa", l.terminalPressureDrop, "Pa", d.pressureDropPa, { min: 0 })}
+                ${input("roomTargetDbA", l.roomTarget, "dB(A)", d.roomTargetDbA, { min: 15, max: 90 })}
+                ${input("distanceM", l.distance, "m", d.distanceM, { min: 0.5 })}
+                ${input("roomAbsorptionM2", l.roomAbsorption, "m² sabin", d.roomAbsorptionM2, { min: 0.1 })}
+            </div>
+        `;
+    };
+
     const renderHvacForm = (lang) => {
         const d = currentToolDefaults("hvac");
         const l = LABELS[lang];
@@ -1539,6 +1625,42 @@
                 missingRows.length ? `<h3>${escapeHtml(l.missingInputs)}</h3>${detailTable([LANGS[lang].note, l.status, l.component, l.recommendation], missingRows)}` : "",
                 riskRows.length ? `<h3>${escapeHtml(l.constraintCheck)}</h3>${detailTable([l.component, l.status, LANGS[lang].note], riskRows)}` : "",
                 `<h3>${escapeHtml(l.recommendation)}</h3><p>${escapeHtml((result.nextActions || []).join(" "))}</p>`
+            ].join("")
+        };
+    };
+
+    const calculateGrilleNoise = async (state, lang) => {
+        const l = LABELS[lang];
+        const result = await postCalculation("grilleNoise", {
+            projectName: state.projectName || "",
+            roomType: state.roomType || "generic",
+            airflowM3H: requireNumber(state.airflowM3H, l.airFlow, { min: 0.01 }),
+            grilleWidthMm: requireNumber(state.grilleWidthMm, l.grilleWidth, { min: 1 }),
+            grilleHeightMm: requireNumber(state.grilleHeightMm, l.grilleHeight, { min: 1 }),
+            freeAreaRatio: requireNumber(state.freeAreaRatio, l.freeAreaRatio, { min: 0.1, max: 1 }),
+            pressureDropPa: optionalNumber(state.pressureDropPa, l.terminalPressureDrop, { min: 0 }) ?? undefined,
+            roomTargetDbA: requireNumber(state.roomTargetDbA, l.roomTarget, { min: 15, max: 90 }),
+            distanceM: requireNumber(state.distanceM, l.distance, { min: 0.5 }),
+            roomAbsorptionM2: requireNumber(state.roomAbsorptionM2, l.roomAbsorption, { min: 0.1 })
+        }, lang);
+        const checkRows = (result.checks || []).map((item) => [
+            item.check,
+            formatValue(item.value, item.unit || "", lang, item.unit === "Pa" ? 0 : 1),
+            riskLevelLabel(item.risk, lang)
+        ]);
+        const recommendationRows = (result.recommendations || []).map((item) => [item]);
+        return {
+            warnings: result.warnings || [],
+            cards: [
+                { label: l.soundRisk, value: riskLevelLabel(result.risk, lang), detail: result.resultLabel || "" },
+                { label: l.faceVelocity, value: formatValue(result.faceVelocityMS, "m/s", lang, 2), detail: `${l.freeArea}: ${formatValue(result.freeAreaM2, "m²", lang, 3)}` },
+                { label: l.terminalPressureDrop, value: formatValue(result.pressureDropPa, "Pa", lang, 0), detail: `${l.freeAreaRatio}: ${formatNumber(result.freeAreaRatio, lang, 2)}` },
+                { label: l.estimatedRoomLevel, value: formatValue(result.estimatedRoomLevelDbA, "dB(A)", lang, 1), detail: `${l.roomTarget}: ${formatValue(result.roomTargetDbA, "dB(A)", lang, 1)}` },
+                { label: l.noiseMargin, value: formatValue(result.marginDb, "dB", lang, 1), detail: `${l.estimatedSoundPower}: ${formatValue(result.estimatedSoundPowerDbA, "dB(A)", lang, 1)}` }
+            ],
+            table: [
+                detailTable([l.component, LANGS[lang].value, l.status], checkRows),
+                recommendationRows.length ? `<h3>${escapeHtml(l.manufacturerCheck)}</h3>${detailTable([l.recommendation], recommendationRows)}` : ""
             ].join("")
         };
     };
@@ -1856,6 +1978,7 @@
     const calculators = {
         conceptcheck: calculateConceptcheck,
         projectIntake: calculateProjectIntake,
+        grilleNoise: calculateGrilleNoise,
         hvac: calculateHvac,
         renovation: calculateRenovation,
         shafts: calculateShafts,
@@ -1867,6 +1990,7 @@
     const formRenderers = {
         conceptcheck: renderConceptcheckForm,
         projectIntake: renderProjectIntakeForm,
+        grilleNoise: renderGrilleNoiseForm,
         hvac: renderHvacForm,
         renovation: renderRenovationForm,
         shafts: renderShaftForm,
