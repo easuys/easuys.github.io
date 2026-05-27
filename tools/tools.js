@@ -256,6 +256,18 @@
                 fr: "Checklist pour équipements en toiture : appuis, charge indicative, vent et coordination."
             }
         },
+        ahuZoning: {
+            title: {
+                nl: "Een luchtgroep genoeg?",
+                en: "Is one AHU enough?",
+                fr: "Une CTA suffit ?"
+            },
+            description: {
+                nl: "Controleer zones op debiet, uurrooster, brandcompartiment, clean/process en drukrol voor luchtgroepopsplitsing.",
+                en: "Check zones by flow, operating profile, fire compartment, clean/process use and pressure role for AHU splits.",
+                fr: "Contrôle zones par débit, horaires, compartiment feu, clean/process et pression pour répartir les CTA."
+            }
+        },
         hvac: {
             title: {
                 nl: "HVAC ruimtestaat",
@@ -481,7 +493,15 @@
             supportArea: "Steunoppervlak",
             roofLoad: "Dakbelasting",
             totalWeight: "Totaal gewicht",
-            checklist: "Checklist"
+            checklist: "Checklist",
+            maxSingleAhuFlow: "Max. debiet per luchtgroep",
+            operatingProfile: "Uurrooster",
+            fireCompartment: "Brandcompartiment",
+            cleanZone: "Clean-zone",
+            processExtract: "Proces/extract",
+            recommendedAhuCount: "Aanbevolen luchtgroepen",
+            singleAhuRisk: "Luchtgroepkeuze",
+            group: "Groep"
         },
         en: {
             indoorTemp: "Indoor temperature",
@@ -633,7 +653,15 @@
             supportArea: "Support area",
             roofLoad: "Roof load",
             totalWeight: "Total weight",
-            checklist: "Checklist"
+            checklist: "Checklist",
+            maxSingleAhuFlow: "Max. flow per AHU",
+            operatingProfile: "Operating profile",
+            fireCompartment: "Fire compartment",
+            cleanZone: "Clean zone",
+            processExtract: "Process/extract",
+            recommendedAhuCount: "Recommended AHUs",
+            singleAhuRisk: "AHU choice",
+            group: "Group"
         },
         fr: {
             indoorTemp: "Température intérieure",
@@ -785,7 +813,15 @@
             supportArea: "Surface d'appui",
             roofLoad: "Charge toiture",
             totalWeight: "Poids total",
-            checklist: "Checklist"
+            checklist: "Checklist",
+            maxSingleAhuFlow: "Débit max. par CTA",
+            operatingProfile: "Horaire",
+            fireCompartment: "Compartiment feu",
+            cleanZone: "Zone propre",
+            processExtract: "Process/extraction",
+            recommendedAhuCount: "CTA recommandées",
+            singleAhuRisk: "Choix CTA",
+            group: "Groupe"
         }
     };
 
@@ -894,6 +930,47 @@
             roofEquipment3Label: "",
             roofEquipment3WeightKg: "",
             roofEquipment3SupportAreaM2: ""
+        },
+        ahuZoning: {
+            projectName: "Luchtgroepindeling",
+            maxSingleAhuFlowM3H: 6000,
+            allowDifferentSchedules: false,
+            allowFireCompartmentMix: false,
+            zone1Name: "Leslokalen",
+            zone1FlowM3H: 2200,
+            zone1OperatingProfile: "school-day",
+            zone1FireCompartment: "A",
+            zone1PressureRole: "neutral",
+            zone1CleanZone: false,
+            zone1ProcessExtract: false,
+            zone2Name: "Atelier",
+            zone2FlowM3H: 1800,
+            zone2OperatingProfile: "workshop",
+            zone2FireCompartment: "B",
+            zone2PressureRole: "negative",
+            zone2CleanZone: false,
+            zone2ProcessExtract: true,
+            zone3Name: "Clean-zone",
+            zone3FlowM3H: 1200,
+            zone3OperatingProfile: "school-day",
+            zone3FireCompartment: "A",
+            zone3PressureRole: "positive",
+            zone3CleanZone: true,
+            zone3ProcessExtract: false,
+            zone4Name: "",
+            zone4FlowM3H: "",
+            zone4OperatingProfile: "",
+            zone4FireCompartment: "",
+            zone4PressureRole: "neutral",
+            zone4CleanZone: false,
+            zone4ProcessExtract: false,
+            zone5Name: "",
+            zone5FlowM3H: "",
+            zone5OperatingProfile: "",
+            zone5FireCompartment: "",
+            zone5PressureRole: "neutral",
+            zone5CleanZone: false,
+            zone5ProcessExtract: false
         },
         hvac: {
             projectName: "Concept",
@@ -1160,6 +1237,7 @@
         grilleNoise: "/calculate/grille-noise-risk",
         plantFit: "/calculate/plant-room-clearance",
         roofLoad: "/calculate/roof-plant-interface",
+        ahuZoning: "/calculate/ahu-zoning-check",
         hvac: "/calculate/hvac-building",
         renovation: "/calculate/renovation",
         shafts: "/calculate/shaft",
@@ -1227,9 +1305,9 @@
 
     const riskLevelLabel = (level, lang) => {
         const levels = {
-            nl: { low: "laag", medium: "matig", high: "hoog", fits_indicatively: "past indicatief", too_small: "te klein", coordination_required: "coördinatie nodig" },
-            en: { low: "low", medium: "medium", high: "high", fits_indicatively: "fits indicatively", too_small: "too small", coordination_required: "coordination required" },
-            fr: { low: "faible", medium: "moyen", high: "élevé", fits_indicatively: "convient indicativement", too_small: "trop petit", coordination_required: "coordination requise" }
+            nl: { low: "laag", medium: "matig", high: "hoog", fits_indicatively: "past indicatief", too_small: "te klein", coordination_required: "coördinatie nodig", single_ahu_possible: "een luchtgroep mogelijk", single_ahu_with_controls: "een luchtgroep met regelzones", split_recommended: "opsplitsen aanbevolen" },
+            en: { low: "low", medium: "medium", high: "high", fits_indicatively: "fits indicatively", too_small: "too small", coordination_required: "coordination required", single_ahu_possible: "one AHU possible", single_ahu_with_controls: "one AHU with controls", split_recommended: "split recommended" },
+            fr: { low: "faible", medium: "moyen", high: "élevé", fits_indicatively: "convient indicativement", too_small: "trop petit", coordination_required: "coordination requise", single_ahu_possible: "une CTA possible", single_ahu_with_controls: "une CTA avec régulation", split_recommended: "séparation recommandée" }
         };
         return (levels[lang] || levels.nl)[level] || level || "-";
     };
@@ -1559,6 +1637,63 @@
             <div class="tool-check-grid">${checkbox("windExposed", l.windExposed, d.windExposed)}</div>
             <h3>${escapeHtml(l.equipment)}</h3>
             ${renderRoofEquipmentRows(d, lang)}
+        `;
+    };
+
+    const renderAhuZoningRows = (defaults, lang) => {
+        const l = LABELS[lang];
+        let rows = "";
+        for (let index = 1; index <= 5; index += 1) {
+            rows += `
+                <tr>
+                    <td><input type="text" data-field="zone${index}Name" value="${escapeHtml(defaults[`zone${index}Name`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="zone${index}FlowM3H" value="${escapeHtml(defaults[`zone${index}FlowM3H`])}"></td>
+                    <td><input type="text" data-field="zone${index}OperatingProfile" value="${escapeHtml(defaults[`zone${index}OperatingProfile`])}"></td>
+                    <td><input type="text" data-field="zone${index}FireCompartment" value="${escapeHtml(defaults[`zone${index}FireCompartment`])}"></td>
+                    <td>
+                        <select data-field="zone${index}PressureRole">
+                            ${HVAC_PRESSURE_ROLES.map(([value, labels]) => `<option value="${escapeHtml(value)}" ${defaults[`zone${index}PressureRole`] === value ? "selected" : ""}>${escapeHtml(textFor(labels, lang))}</option>`).join("")}
+                        </select>
+                    </td>
+                    <td><input type="checkbox" data-field="zone${index}CleanZone" ${defaults[`zone${index}CleanZone`] ? "checked" : ""}></td>
+                    <td><input type="checkbox" data-field="zone${index}ProcessExtract" ${defaults[`zone${index}ProcessExtract`] ? "checked" : ""}></td>
+                </tr>
+            `;
+        }
+        return `
+            <div class="table-scroll">
+                <table class="tool-input-table">
+                    <thead>
+                        <tr>
+                            <th>${escapeHtml(l.roomName)}</th>
+                            <th>${escapeHtml(l.airFlow)} m³/h</th>
+                            <th>${escapeHtml(l.operatingProfile)}</th>
+                            <th>${escapeHtml(l.fireCompartment)}</th>
+                            <th>${escapeHtml(l.pressureRole)}</th>
+                            <th>${escapeHtml(l.cleanZone)}</th>
+                            <th>${escapeHtml(l.processExtract)}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        `;
+    };
+
+    const renderAhuZoningForm = (lang) => {
+        const d = currentToolDefaults("ahuZoning");
+        const l = LABELS[lang];
+        return `
+            <div class="tool-form-grid">
+                ${input("projectName", LANGS[lang].projectName, "", d.projectName, { type: "text" })}
+                ${input("maxSingleAhuFlowM3H", l.maxSingleAhuFlow, "m³/h", d.maxSingleAhuFlowM3H, { min: 100 })}
+            </div>
+            <div class="tool-check-grid">
+                ${checkbox("allowDifferentSchedules", l.operatingProfile, d.allowDifferentSchedules)}
+                ${checkbox("allowFireCompartmentMix", l.fireCompartment, d.allowFireCompartmentMix)}
+            </div>
+            <h3>${escapeHtml(l.roomSchedule)}</h3>
+            ${renderAhuZoningRows(d, lang)}
         `;
     };
 
@@ -1967,6 +2102,60 @@
         };
     };
 
+    const calculateAhuZoning = async (state, lang) => {
+        const l = LABELS[lang];
+        const errors = [];
+        const zones = [];
+        for (let index = 1; index <= 5; index += 1) {
+            const name = state[`zone${index}Name`] || "";
+            const flow = optionalNumber(state[`zone${index}FlowM3H`], `${name || l.roomName} ${l.airFlow}`, { min: 0 });
+            const hasZone = name.trim() || flow !== null;
+            if (!hasZone) continue;
+            if (!name.trim()) errors.push(`${l.roomName} ${index}: ${LANGS[lang].missing}`);
+            if (flow === null || flow <= 0) errors.push(`${name || l.roomName} ${l.airFlow}: ${LANGS[lang].missing}`);
+            if (name.trim() && flow !== null && flow > 0) {
+                zones.push({
+                    name,
+                    flowM3H: flow,
+                    operatingProfile: state[`zone${index}OperatingProfile`] || "day",
+                    fireCompartment: state[`zone${index}FireCompartment`] || "unknown",
+                    pressureRole: state[`zone${index}PressureRole`] || "neutral",
+                    cleanZone: Boolean(state[`zone${index}CleanZone`]),
+                    processExtract: Boolean(state[`zone${index}ProcessExtract`])
+                });
+            }
+        }
+        if (!zones.length) errors.push(`${l.roomSchedule}: ${LANGS[lang].missing}`);
+        if (errors.length) return { errors, warnings: [] };
+        const result = await postCalculation("ahuZoning", {
+            projectName: state.projectName || "",
+            maxSingleAhuFlowM3H: requireNumber(state.maxSingleAhuFlowM3H, l.maxSingleAhuFlow, { min: 100 }),
+            allowDifferentSchedules: Boolean(state.allowDifferentSchedules),
+            allowFireCompartmentMix: Boolean(state.allowFireCompartmentMix),
+            zones
+        }, lang);
+        const groupRows = (result.groups || []).map((group) => [
+            group.category || group.group,
+            (group.zones || []).join(", "),
+            formatValue(group.flowM3H, "m³/h", lang, 0),
+            (group.operatingProfiles || []).join(", "),
+            (group.fireCompartments || []).join(", "),
+            group.rationale || ""
+        ]);
+        return {
+            warnings: result.warnings || [],
+            cards: [
+                { label: l.singleAhuRisk, value: riskLevelLabel(result.singleAhuRisk, lang), detail: result.resultLabel || "" },
+                { label: l.recommendedAhuCount, value: String(result.recommendedAhuCount || "-"), detail: `${l.numberOfZones}: ${result.zoneCount || 0}` },
+                { label: l.ahuFlow, value: formatValue(result.totalFlowM3H, "m³/h", lang, 0), detail: `${l.maxSingleAhuFlow}: ${formatValue(result.maxSingleAhuFlowM3H, "m³/h", lang, 0)}` }
+            ],
+            table: [
+                detailTable([l.group, l.roomSchedule, l.airFlow, l.operatingProfile, l.fireCompartment, l.recommendation], groupRows),
+                `<h3>${escapeHtml(l.recommendation)}</h3><p>${escapeHtml(result.recommendation || "")}</p>`
+            ].join("")
+        };
+    };
+
     const calculateHvac = async (state, lang) => {
         const l = LABELS[lang];
         const errors = [];
@@ -2283,6 +2472,7 @@
         grilleNoise: calculateGrilleNoise,
         plantFit: calculatePlantFit,
         roofLoad: calculateRoofLoad,
+        ahuZoning: calculateAhuZoning,
         hvac: calculateHvac,
         renovation: calculateRenovation,
         shafts: calculateShafts,
@@ -2297,6 +2487,7 @@
         grilleNoise: renderGrilleNoiseForm,
         plantFit: renderPlantFitForm,
         roofLoad: renderRoofLoadForm,
+        ahuZoning: renderAhuZoningForm,
         hvac: renderHvacForm,
         renovation: renderRenovationForm,
         shafts: renderShaftForm,
