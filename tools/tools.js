@@ -232,6 +232,18 @@
                 fr: "Screening rapide de surface libre, vitesse frontale, perte de charge et marge acoustique local."
             }
         },
+        plantFit: {
+            title: {
+                nl: "Technisch lokaal fit",
+                en: "Plant room fit",
+                fr: "Fit local technique"
+            },
+            description: {
+                nl: "Controleer of toestellen met onderhoudszones indicatief in een technisch lokaal passen.",
+                en: "Check whether equipment and service clearances indicatively fit inside a plant room.",
+                fr: "Vérifie si les appareils et zones de maintenance tiennent indicativement dans un local technique."
+            }
+        },
         hvac: {
             title: {
                 nl: "HVAC ruimtestaat",
@@ -442,7 +454,15 @@
             estimatedSoundPower: "Geschat geluidvermogen",
             estimatedRoomLevel: "Geschat ruimteniveau",
             noiseMargin: "Geluidsmarge",
-            manufacturerCheck: "Fabrikantcontrole"
+            manufacturerCheck: "Fabrikantcontrole",
+            equipment: "Toestellen",
+            equipmentLabel: "Toestel",
+            equipmentWidth: "Toestelbreedte",
+            equipmentLength: "Toestellengte",
+            serviceFront: "Onderhoud vooraan",
+            serviceSide: "Onderhoud zijkant",
+            requiredServiceArea: "Benodigde servicezone",
+            fitRatio: "Vullingsgraad"
         },
         en: {
             indoorTemp: "Indoor temperature",
@@ -579,7 +599,15 @@
             estimatedSoundPower: "Estimated sound power",
             estimatedRoomLevel: "Estimated room level",
             noiseMargin: "Noise margin",
-            manufacturerCheck: "Manufacturer check"
+            manufacturerCheck: "Manufacturer check",
+            equipment: "Equipment",
+            equipmentLabel: "Equipment",
+            equipmentWidth: "Equipment width",
+            equipmentLength: "Equipment length",
+            serviceFront: "Front service",
+            serviceSide: "Side service",
+            requiredServiceArea: "Required service area",
+            fitRatio: "Fit ratio"
         },
         fr: {
             indoorTemp: "Température intérieure",
@@ -716,7 +744,15 @@
             estimatedSoundPower: "Puissance sonore estimée",
             estimatedRoomLevel: "Niveau local estimé",
             noiseMargin: "Marge acoustique",
-            manufacturerCheck: "Contrôle fabricant"
+            manufacturerCheck: "Contrôle fabricant",
+            equipment: "Appareils",
+            equipmentLabel: "Appareil",
+            equipmentWidth: "Largeur appareil",
+            equipmentLength: "Longueur appareil",
+            serviceFront: "Maintenance avant",
+            serviceSide: "Maintenance côté",
+            requiredServiceArea: "Zone maintenance requise",
+            fitRatio: "Taux occupation"
         }
     };
 
@@ -786,6 +822,31 @@
             roomTargetDbA: 35,
             distanceM: 2.5,
             roomAbsorptionM2: 12
+        },
+        plantFit: {
+            projectName: "Technisch lokaal",
+            roomWidthM: 4,
+            roomLengthM: 5,
+            equipment1Label: "Luchtgroep",
+            equipment1WidthM: 1.2,
+            equipment1LengthM: 2.8,
+            equipment1ServiceFrontM: 1,
+            equipment1ServiceSideM: 0.5,
+            equipment2Label: "Warmtepomp",
+            equipment2WidthM: 0.9,
+            equipment2LengthM: 1.4,
+            equipment2ServiceFrontM: 0.8,
+            equipment2ServiceSideM: 0.4,
+            equipment3Label: "Boiler",
+            equipment3WidthM: 0.8,
+            equipment3LengthM: 0.8,
+            equipment3ServiceFrontM: 0.7,
+            equipment3ServiceSideM: 0.3,
+            equipment4Label: "",
+            equipment4WidthM: "",
+            equipment4LengthM: "",
+            equipment4ServiceFrontM: 0.8,
+            equipment4ServiceSideM: 0.4
         },
         hvac: {
             projectName: "Concept",
@@ -1050,6 +1111,7 @@
         conceptcheck: "/calculate/building-tech-conceptcheck",
         projectIntake: "/calculate/project-intake-checklist",
         grilleNoise: "/calculate/grille-noise-risk",
+        plantFit: "/calculate/plant-room-clearance",
         hvac: "/calculate/hvac-building",
         renovation: "/calculate/renovation",
         shafts: "/calculate/shaft",
@@ -1364,6 +1426,52 @@
         `;
     };
 
+    const renderPlantEquipmentRows = (defaults, lang) => {
+        const l = LABELS[lang];
+        let rows = "";
+        for (let index = 1; index <= 4; index += 1) {
+            rows += `
+                <tr>
+                    <td><input type="text" data-field="equipment${index}Label" value="${escapeHtml(defaults[`equipment${index}Label`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="equipment${index}WidthM" value="${escapeHtml(defaults[`equipment${index}WidthM`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="equipment${index}LengthM" value="${escapeHtml(defaults[`equipment${index}LengthM`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="equipment${index}ServiceFrontM" value="${escapeHtml(defaults[`equipment${index}ServiceFrontM`])}"></td>
+                    <td><input type="number" inputmode="decimal" step="any" min="0" data-field="equipment${index}ServiceSideM" value="${escapeHtml(defaults[`equipment${index}ServiceSideM`])}"></td>
+                </tr>
+            `;
+        }
+        return `
+            <div class="table-scroll">
+                <table class="tool-input-table">
+                    <thead>
+                        <tr>
+                            <th>${escapeHtml(l.equipmentLabel)}</th>
+                            <th>${escapeHtml(l.equipmentWidth)} m</th>
+                            <th>${escapeHtml(l.equipmentLength)} m</th>
+                            <th>${escapeHtml(l.serviceFront)} m</th>
+                            <th>${escapeHtml(l.serviceSide)} m</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        `;
+    };
+
+    const renderPlantFitForm = (lang) => {
+        const d = currentToolDefaults("plantFit");
+        const l = LABELS[lang];
+        return `
+            <div class="tool-form-grid">
+                ${input("projectName", LANGS[lang].projectName, "", d.projectName, { type: "text" })}
+                ${input("roomWidthM", l.plantRoomWidth, "m", d.roomWidthM, { min: 0 })}
+                ${input("roomLengthM", l.plantRoomLength, "m", d.roomLengthM, { min: 0 })}
+            </div>
+            <h3>${escapeHtml(l.equipment)}</h3>
+            ${renderPlantEquipmentRows(d, lang)}
+        `;
+    };
+
     const renderHvacForm = (lang) => {
         const d = currentToolDefaults("hvac");
         const l = LABELS[lang];
@@ -1662,6 +1770,59 @@
                 detailTable([l.component, LANGS[lang].value, l.status], checkRows),
                 recommendationRows.length ? `<h3>${escapeHtml(l.manufacturerCheck)}</h3>${detailTable([l.recommendation], recommendationRows)}` : ""
             ].join("")
+        };
+    };
+
+    const calculatePlantFit = async (state, lang) => {
+        const l = LABELS[lang];
+        const errors = [];
+        const equipment = [];
+        for (let index = 1; index <= 4; index += 1) {
+            const label = state[`equipment${index}Label`] || "";
+            const width = optionalNumber(state[`equipment${index}WidthM`], `${label || l.equipmentLabel} ${l.equipmentWidth}`, { min: 0 });
+            const length = optionalNumber(state[`equipment${index}LengthM`], `${label || l.equipmentLabel} ${l.equipmentLength}`, { min: 0 });
+            const serviceFront = optionalNumber(state[`equipment${index}ServiceFrontM`], `${label || l.equipmentLabel} ${l.serviceFront}`, { min: 0 });
+            const serviceSide = optionalNumber(state[`equipment${index}ServiceSideM`], `${label || l.equipmentLabel} ${l.serviceSide}`, { min: 0 });
+            const hasEquipment = label.trim() || width !== null || length !== null;
+            if (!hasEquipment) continue;
+            if (!label.trim()) errors.push(`${l.equipmentLabel} ${index}: ${LANGS[lang].missing}`);
+            if (width === null || width <= 0) errors.push(`${label || l.equipmentLabel} ${l.equipmentWidth}: ${LANGS[lang].missing}`);
+            if (length === null || length <= 0) errors.push(`${label || l.equipmentLabel} ${l.equipmentLength}: ${LANGS[lang].missing}`);
+            if (label.trim() && width !== null && width > 0 && length !== null && length > 0) {
+                equipment.push({
+                    label,
+                    widthM: width,
+                    lengthM: length,
+                    serviceFrontM: serviceFront ?? 0.8,
+                    serviceSideM: serviceSide ?? 0.4
+                });
+            }
+        }
+        if (!equipment.length) errors.push(`${l.equipment}: ${LANGS[lang].missing}`);
+        if (errors.length) return { errors, warnings: [] };
+        const roomWidthM = requireNumber(state.roomWidthM, l.plantRoomWidth, { min: 0.1 });
+        const roomLengthM = requireNumber(state.roomLengthM, l.plantRoomLength, { min: 0.1 });
+        const result = await postCalculation("plantFit", {
+            roomWidthM,
+            roomLengthM,
+            equipment
+        }, lang);
+        const rows = (result.equipment || []).map((item) => [
+            item.label,
+            formatValue(item.footprintM2, "m²", lang, 2),
+            formatValue(item.serviceEnvelopeM2, "m²", lang, 2),
+            formatValue(item.serviceFrontM, "m", lang, 2),
+            formatValue(item.serviceSideM, "m", lang, 2)
+        ]);
+        return {
+            warnings: result.warnings || [],
+            cards: [
+                { label: l.status, value: riskLevelLabel(result.risk, lang), detail: result.risk || "" },
+                { label: l.plantRoom, value: formatValue(result.roomAreaM2, "m²", lang, 1), detail: `${formatValue(roomWidthM, "m", lang, 1)} × ${formatValue(roomLengthM, "m", lang, 1)}` },
+                { label: l.requiredServiceArea, value: formatValue(result.requiredServiceAreaM2, "m²", lang, 1), detail: `${l.fitRatio}: ${formatValue(result.fitRatioPercent, "%", lang, 0)}` },
+                { label: l.equipment, value: String((result.equipment || []).length), detail: l.serviceFront }
+            ],
+            table: detailTable([l.equipmentLabel, l.area, l.requiredServiceArea, l.serviceFront, l.serviceSide], rows)
         };
     };
 
@@ -1979,6 +2140,7 @@
         conceptcheck: calculateConceptcheck,
         projectIntake: calculateProjectIntake,
         grilleNoise: calculateGrilleNoise,
+        plantFit: calculatePlantFit,
         hvac: calculateHvac,
         renovation: calculateRenovation,
         shafts: calculateShafts,
@@ -1991,6 +2153,7 @@
         conceptcheck: renderConceptcheckForm,
         projectIntake: renderProjectIntakeForm,
         grilleNoise: renderGrilleNoiseForm,
+        plantFit: renderPlantFitForm,
         hvac: renderHvacForm,
         renovation: renderRenovationForm,
         shafts: renderShaftForm,
