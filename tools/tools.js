@@ -208,6 +208,18 @@
                 fr: "Premier screening conceptuel pour ventilation, chauffage, refroidissement, gaines, pression/bruit et zones techniques."
             }
         },
+        projectIntake: {
+            title: {
+                nl: "Projectintake checklist",
+                en: "Project intake checklist",
+                fr: "Checklist intake projet"
+            },
+            description: {
+                nl: "Upload-vrije checklist voor architecten: ontbrekende inputs, brand-/schachtinterfaces, onderhoudstoegang en gereedheid voor een quickscan.",
+                en: "Upload-free architect checklist for missing inputs, fire/shaft interfaces, maintenance access and quickscan readiness.",
+                fr: "Checklist sans upload pour architectes : données manquantes, interfaces feu/gaines, maintenance et préparation quickscan."
+            }
+        },
         hvac: {
             title: {
                 nl: "HVAC ruimtestaat",
@@ -674,6 +686,41 @@
             plantRoomWidthM: 4,
             plantRoomLengthM: 5
         },
+        projectIntake: {
+            projectName: "Projectintake",
+            buildingType: "school",
+            projectPhase: "concept",
+            publicBuilding: true,
+            renovation: true,
+            cleanZones: false,
+            workshopProcessZones: true,
+            roofPlant: true,
+            plantRoom: true,
+            hvacScope: true,
+            sanitaryScope: true,
+            electricalScope: true,
+            structuralChanges: true,
+            fireCompartmentChanges: true,
+            acousticSensitive: true,
+            existingPlans: true,
+            measuredPlans: false,
+            photos: false,
+            roomList: true,
+            occupancySchedule: false,
+            ventilationConcept: false,
+            shaftZones: false,
+            plantRoomDimensions: false,
+            roofStructureInfo: false,
+            fireCompartments: false,
+            maintenanceAccess: false,
+            electricalCapacity: false,
+            drainageRoutes: false,
+            noiseTargets: false,
+            asbestosSurvey: false,
+            budgetRange: false,
+            targetDate: false,
+            publicTenderRequirements: false
+        },
         hvac: {
             projectName: "Concept",
             indoorWinterTemp: 20,
@@ -856,6 +903,44 @@
         ["executionPhasing", { nl: "Fasering en tijdelijke steun bekeken", en: "Phasing and temporary support considered", fr: "Phasage et étaiement provisoire examinés" }]
     ];
 
+    const PROJECT_PHASES = [
+        ["concept", { nl: "Concept", en: "Concept", fr: "Concept" }],
+        ["tender", { nl: "Offerte/aanbesteding", en: "Tender", fr: "Appel d'offres" }],
+        ["execution", { nl: "Uitvoering", en: "Execution", fr: "Exécution" }]
+    ];
+
+    const PROJECT_INTAKE_FLAGS = [
+        ["publicBuilding", { nl: "Publiek gebouw", en: "Public building", fr: "Bâtiment public" }],
+        ["renovation", { nl: "Renovatie", en: "Renovation", fr: "Rénovation" }],
+        ["workshopProcessZones", { nl: "Atelier/proceszones", en: "Workshop/process zones", fr: "Atelier/zones process" }],
+        ["cleanZones", { nl: "Cleanroom/clean-zone", en: "Cleanroom/clean zone", fr: "Cleanroom/zone propre" }],
+        ["roofPlant", { nl: "Dakinstallaties", en: "Roof plant", fr: "Installations en toiture" }],
+        ["plantRoom", { nl: "Technisch lokaal", en: "Plant room", fr: "Local technique" }],
+        ["structuralChanges", { nl: "Stabiliteitsingrepen", en: "Structural changes", fr: "Interventions stabilité" }],
+        ["fireCompartmentChanges", { nl: "Brandcompartimentering wijzigt", en: "Fire compartments change", fr: "Compartimentage feu modifié" }],
+        ["acousticSensitive", { nl: "Akoestisch gevoelig", en: "Acoustically sensitive", fr: "Sensible acoustiquement" }]
+    ];
+
+    const PROJECT_INTAKE_ITEMS = [
+        ["existingPlans", { nl: "Bestaande plannen of meetbasis", en: "Existing plans or survey basis", fr: "Plans existants ou base de relevé" }],
+        ["measuredPlans", { nl: "Opgemeten/as-built controle", en: "Measured/as-built check", fr: "Contrôle relevé/as-built" }],
+        ["roomList", { nl: "Ruimtelijst met functie en oppervlakte", en: "Room list with function and area", fr: "Liste locaux avec fonction et surface" }],
+        ["occupancySchedule", { nl: "Bezetting en bedrijfsuren", en: "Occupancy and schedule", fr: "Occupation et horaires" }],
+        ["ventilationConcept", { nl: "Ventilatie- en drukconcept", en: "Ventilation and pressure concept", fr: "Concept ventilation et pression" }],
+        ["shaftZones", { nl: "Schachtzones en plafondroutes", en: "Shaft zones and ceiling routes", fr: "Gaines et cheminements plafond" }],
+        ["plantRoomDimensions", { nl: "Afmetingen technisch lokaal", en: "Plant-room dimensions", fr: "Dimensions local technique" }],
+        ["roofStructureInfo", { nl: "Dakstructuur en lastreserve", en: "Roof structure and load allowance", fr: "Structure toiture et réserve de charge" }],
+        ["fireCompartments", { nl: "Brandcompartimenten en doorvoeren", en: "Fire compartments and penetrations", fr: "Compartiments feu et traversées" }],
+        ["maintenanceAccess", { nl: "Onderhouds- en vervangtoegang", en: "Maintenance and replacement access", fr: "Accès maintenance/remplacement" }],
+        ["electricalCapacity", { nl: "Elektrisch vermogen en interfaces", en: "Electrical capacity and interfaces", fr: "Puissance électrique et interfaces" }],
+        ["drainageRoutes", { nl: "Afvoer/condensaatroutes", en: "Drainage/condensate routes", fr: "Évacuation/condensats" }],
+        ["noiseTargets", { nl: "Geluidscriteria en buren", en: "Noise targets and adjacencies", fr: "Critères bruit et voisinage" }],
+        ["asbestosSurvey", { nl: "Asbest-/gevaarlijke stoffenstatus", en: "Asbestos/hazard status", fr: "Statut amiante/dangers" }],
+        ["budgetRange", { nl: "Budgetorde of kostengevoeligheid", en: "Budget range or cost sensitivity", fr: "Budget ou sensibilité coût" }],
+        ["targetDate", { nl: "Beslissings- of aanbestedingsdatum", en: "Decision or tender date", fr: "Date décision/appel d'offres" }],
+        ["publicTenderRequirements", { nl: "Aanbestedingsvereisten", en: "Tender requirements", fr: "Exigences marché public" }]
+    ];
+
     const HVAC_ROOM_TYPES = [
         ["office", { nl: "Kantoor", en: "Office", fr: "Bureau" }],
         ["classroom", { nl: "Leslokaal", en: "Classroom", fr: "Salle de cours" }],
@@ -897,6 +982,7 @@
     const API_BASE_URL = "https://easuys-tools-api.yellow-violet-f185.workers.dev";
     const API_ENDPOINTS = {
         conceptcheck: "/calculate/building-tech-conceptcheck",
+        projectIntake: "/calculate/project-intake-checklist",
         hvac: "/calculate/hvac-building",
         renovation: "/calculate/renovation",
         shafts: "/calculate/shaft",
@@ -1173,6 +1259,25 @@
         `;
     };
 
+    const renderProjectIntakeForm = (lang) => {
+        const d = currentToolDefaults("projectIntake");
+        const l = LABELS[lang];
+        const flags = PROJECT_INTAKE_FLAGS.map(([field, labels]) => checkbox(field, textFor(labels, lang), d[field])).join("");
+        const checks = PROJECT_INTAKE_ITEMS.map(([field, labels]) => checkbox(field, textFor(labels, lang), d[field])).join("");
+        return `
+            <h3>${escapeHtml(l.buildingConditions)}</h3>
+            <div class="tool-form-grid">
+                ${input("projectName", LANGS[lang].projectName, "", d.projectName, { type: "text" })}
+                ${selectInput("buildingType", l.buildingType, d.buildingType, BUILDING_TYPES, lang)}
+                ${selectInput("projectPhase", l.status, d.projectPhase, PROJECT_PHASES, lang)}
+            </div>
+            <h3>${escapeHtml(l.attention)}</h3>
+            <div class="tool-check-grid">${flags}</div>
+            <h3>${escapeHtml(l.missingInputs)}</h3>
+            <div class="tool-check-grid">${checks}</div>
+        `;
+    };
+
     const renderHvacForm = (lang) => {
         const d = currentToolDefaults("hvac");
         const l = LABELS[lang];
@@ -1400,6 +1505,41 @@
                 `<h3>${escapeHtml(l.recommendation)}</h3><p>${escapeHtml(outputs.recommendation || "")}</p>`
             ].join(""),
             reportPayload: { result }
+        };
+    };
+
+    const calculateProjectIntake = async (state, lang) => {
+        const l = LABELS[lang];
+        const result = await postCalculation("projectIntake", {
+            projectName: state.projectName || "",
+            buildingType: state.buildingType || "school",
+            projectPhase: state.projectPhase || "concept",
+            ...Object.fromEntries(PROJECT_INTAKE_FLAGS.map(([field]) => [field, Boolean(state[field])])),
+            ...Object.fromEntries(PROJECT_INTAKE_ITEMS.map(([field]) => [field, Boolean(state[field])]))
+        }, lang);
+        const missingRows = (result.missingInputs || []).map((item) => [
+            item.label || item.id,
+            item.priority || "",
+            item.category || "",
+            item.why || ""
+        ]);
+        const riskRows = (result.interfaceRisks || []).map((risk) => [
+            risk.code || "",
+            risk.level || "",
+            risk.message || ""
+        ]);
+        return {
+            warnings: (result.nextActions || []).concat(result.noUploadPolicy ? [result.noUploadPolicy] : []),
+            cards: [
+                { label: l.readiness, value: `${formatNumber(result.readinessPercent, lang, 0)} %`, detail: result.readinessLevel || "" },
+                { label: l.missingInputs, value: String((result.missingInputs || []).length), detail: `${result.criticalMissingCount || 0} critical` },
+                { label: l.attention, value: String((result.interfaceRisks || []).length), detail: result.paidStudyFit || "" }
+            ],
+            table: [
+                missingRows.length ? `<h3>${escapeHtml(l.missingInputs)}</h3>${detailTable([LANGS[lang].note, l.status, l.component, l.recommendation], missingRows)}` : "",
+                riskRows.length ? `<h3>${escapeHtml(l.constraintCheck)}</h3>${detailTable([l.component, l.status, LANGS[lang].note], riskRows)}` : "",
+                `<h3>${escapeHtml(l.recommendation)}</h3><p>${escapeHtml((result.nextActions || []).join(" "))}</p>`
+            ].join("")
         };
     };
 
@@ -1715,6 +1855,7 @@
 
     const calculators = {
         conceptcheck: calculateConceptcheck,
+        projectIntake: calculateProjectIntake,
         hvac: calculateHvac,
         renovation: calculateRenovation,
         shafts: calculateShafts,
@@ -1725,6 +1866,7 @@
 
     const formRenderers = {
         conceptcheck: renderConceptcheckForm,
+        projectIntake: renderProjectIntakeForm,
         hvac: renderHvacForm,
         renovation: renderRenovationForm,
         shafts: renderShaftForm,
