@@ -16,6 +16,7 @@
             intro: "Indicatieve rekenhulpen voor renovatie, gebouwtechnieken en technische haalbaarheid.",
             calculate: "Bereken",
             print: "Print rapport",
+            downloadReport: "Download PDF",
             save: "Bewaar invoer",
             load: "Laad invoer",
             localSave: "Bewaar lokaal",
@@ -32,6 +33,8 @@
             noResult: "Vul de invoer aan om een resultaat te berekenen.",
             calculating: "Berekening loopt...",
             apiUnavailable: "De rekendienst is tijdelijk niet bereikbaar.",
+            reportUnavailable: "Bereken eerst de gebouwtechnieken conceptcheck om een PDF te downloaden.",
+            reportDownloaded: "PDF-rapport gegenereerd.",
             fileError: "Dit bestand kon niet worden geladen.",
             fileLoaded: "Invoer geladen.",
             savedLocal: "Invoer lokaal bewaard in deze browser.",
@@ -74,6 +77,7 @@
             intro: "Indicative tools for renovation, building services and technical feasibility.",
             calculate: "Calculate",
             print: "Print report",
+            downloadReport: "Download PDF",
             save: "Save input",
             load: "Load input",
             localSave: "Save locally",
@@ -90,6 +94,8 @@
             noResult: "Complete the input to calculate a result.",
             calculating: "Calculation running...",
             apiUnavailable: "The calculation service is temporarily unavailable.",
+            reportUnavailable: "Calculate the building-services conceptcheck first to download a PDF.",
+            reportDownloaded: "PDF report generated.",
             fileError: "This file could not be loaded.",
             fileLoaded: "Input loaded.",
             savedLocal: "Input saved locally in this browser.",
@@ -132,6 +138,7 @@
             intro: "Outils indicatifs pour rénovation, techniques du bâtiment et faisabilité technique.",
             calculate: "Calculer",
             print: "Imprimer le rapport",
+            downloadReport: "Télécharger PDF",
             save: "Enregistrer l'entrée",
             load: "Charger l'entrée",
             localSave: "Enregistrer localement",
@@ -148,6 +155,8 @@
             noResult: "Complétez l'entrée pour calculer un résultat.",
             calculating: "Calcul en cours...",
             apiUnavailable: "Le service de calcul est temporairement indisponible.",
+            reportUnavailable: "Calculez d'abord le conceptcheck techniques du bâtiment pour télécharger un PDF.",
+            reportDownloaded: "Rapport PDF généré.",
             fileError: "Ce fichier n'a pas pu être chargé.",
             fileLoaded: "Entrée chargée.",
             savedLocal: "Entrée enregistrée localement dans ce navigateur.",
@@ -895,6 +904,9 @@
         acoustics: "/calculate/acoustics",
         intake: "/calculate/intake"
     };
+    const REPORT_ENDPOINTS = {
+        conceptcheck: "/report/conceptcheck"
+    };
 
     const toNumber = (value) => {
         if (value === null || value === undefined || value === "") return null;
@@ -962,7 +974,8 @@
     const appState = {
         lang: "nl",
         activeTool: "renovation",
-        message: ""
+        message: "",
+        lastReportPayload: null
     };
 
     const formatNumber = (value, lang = "nl", decimals = 1) => {
@@ -1289,8 +1302,8 @@
         </section>
     ` : "";
 
-    const postCalculation = async (toolId, payload, lang) => {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS[toolId]}`, {
+    const postJson = async (endpoint, payload, lang) => {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify(payload)
@@ -1309,9 +1322,16 @@
         return data.result || {};
     };
 
-    const calculateConceptcheck = async (state, lang) => {
+    const postCalculation = async (toolId, payload, lang) => postJson(API_ENDPOINTS[toolId], payload, lang);
+
+    const postReport = async (toolId, payload, lang) => {
+        if (!REPORT_ENDPOINTS[toolId]) throw new CalculationError([LANGS[lang].reportUnavailable]);
+        return postJson(REPORT_ENDPOINTS[toolId], payload, lang);
+    };
+
+    const conceptcheckPayload = (state, lang) => {
         const l = LABELS[lang];
-        const result = await postCalculation("conceptcheck", {
+        return {
             projectName: state.projectName || "",
             buildingType: state.buildingType || "school",
             grossAreaM2: optionalNumber(state.grossAreaM2, l.grossArea, { min: 1 }) ?? undefined,
@@ -1329,7 +1349,12 @@
             availableShaftDepthMm: optionalNumber(state.availableShaftDepthMm, l.shaftDepth, { min: 0 }) ?? 0,
             plantRoomWidthM: optionalNumber(state.plantRoomWidthM, l.plantRoomWidth, { min: 0 }) ?? 0,
             plantRoomLengthM: optionalNumber(state.plantRoomLengthM, l.plantRoomLength, { min: 0 }) ?? 0
-        }, lang);
+        };
+    };
+
+    const calculateConceptcheck = async (state, lang) => {
+        const l = LABELS[lang];
+        const result = await postCalculation("conceptcheck", conceptcheckPayload(state, lang), lang);
         const outputs = result.outputs || {};
         const shaftFit = outputs.shaftFit || null;
         const plantRoom = outputs.plantRoomCheck || null;
@@ -1373,7 +1398,8 @@
                 detailTable([l.role, l.roomSchedule, l.supply, l.extract, LANGS[lang].note], ahuRows),
                 constraintRows.length ? `<h3>${escapeHtml(l.constraintCheck)}</h3>${detailTable([l.component, LANGS[lang].value, l.sourceBasis, l.status], constraintRows)}` : "",
                 `<h3>${escapeHtml(l.recommendation)}</h3><p>${escapeHtml(outputs.recommendation || "")}</p>`
-            ].join("")
+            ].join(""),
+            reportPayload: { result }
         };
     };
 
@@ -1725,9 +1751,11 @@
         }
         if (counter !== renderCounter) return;
         if (result.errors && result.errors.length) {
+            appState.lastReportPayload = null;
             resultEl.innerHTML = messageList(t.errors, result.errors, "tool-errors");
             return;
         }
+        appState.lastReportPayload = result.reportPayload || null;
         resultEl.innerHTML = `
             <h2>${escapeHtml(t.results)}</h2>
             ${resultCards(result.cards || [], lang)}
@@ -1743,6 +1771,7 @@
 
     const renderTool = (toolId) => {
         appState.activeTool = toolId;
+        appState.lastReportPayload = null;
         const lang = appState.lang;
         const tool = TOOL_TEXT[toolId];
         document.querySelectorAll("[data-tool-tab]").forEach((tab) => {
@@ -1789,6 +1818,45 @@
         URL.revokeObjectURL(link.href);
     };
 
+    const downloadBase64File = (base64, filename, mimeType) => {
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let index = 0; index < binary.length; index += 1) {
+            bytes[index] = binary.charCodeAt(index);
+        }
+        const blob = new Blob([bytes], { type: mimeType || "application/octet-stream" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename || "ea-suys-report.pdf";
+        link.click();
+        URL.revokeObjectURL(link.href);
+    };
+
+    const downloadReport = async () => {
+        const lang = appState.lang;
+        const messageEl = document.querySelector("[data-message]");
+        try {
+            let reportPayload = appState.lastReportPayload;
+            if (!REPORT_ENDPOINTS[appState.activeTool]) {
+                throw new CalculationError([LANGS[lang].reportUnavailable]);
+            }
+            if (!reportPayload) {
+                const result = await calculators[appState.activeTool](getFormState(), lang);
+                if (result.errors && result.errors.length) throw new CalculationError(result.errors);
+                reportPayload = result.reportPayload;
+                appState.lastReportPayload = reportPayload || null;
+            }
+            if (!reportPayload) throw new CalculationError([LANGS[lang].reportUnavailable]);
+            const report = await postReport(appState.activeTool, { ...reportPayload, format: "pdf" }, lang);
+            if (!report.pdfBase64) throw new CalculationError([LANGS[lang].apiUnavailable]);
+            downloadBase64File(report.pdfBase64, report.pdfFilename, report.pdfMimeType);
+            appState.message = LANGS[lang].reportDownloaded;
+        } catch (error) {
+            appState.message = (error.messages || [error.message]).join(" ");
+        }
+        if (messageEl) messageEl.textContent = appState.message;
+    };
+
     const loadPayload = (payload) => {
         if (!payload || !payload.activeTool || !payload.values || !TOOL_TEXT[payload.activeTool]) {
             throw new Error("Invalid payload");
@@ -1823,6 +1891,7 @@
         document.querySelector("[data-disclaimer-text]").textContent = LANGS[appState.lang].disclaimer;
         document.querySelector("[data-calculate]").textContent = LANGS[appState.lang].calculate;
         document.querySelector("[data-print]").textContent = LANGS[appState.lang].print;
+        document.querySelector("[data-download-report]").textContent = LANGS[appState.lang].downloadReport;
         document.querySelector("[data-save]").textContent = LANGS[appState.lang].save;
         document.querySelector("[data-load-label]").textContent = LANGS[appState.lang].load;
         document.querySelector("[data-local-save]").textContent = LANGS[appState.lang].localSave;
@@ -1844,6 +1913,7 @@
         });
         document.querySelector("[data-calculate]").addEventListener("click", renderResults);
         document.querySelector("[data-print]").addEventListener("click", () => window.print());
+        document.querySelector("[data-download-report]").addEventListener("click", downloadReport);
         document.querySelector("[data-save]").addEventListener("click", saveStateToFile);
         document.querySelector("[data-local-save]").addEventListener("click", () => {
             localStorage.setItem("ea-suys-tools-state", JSON.stringify({
