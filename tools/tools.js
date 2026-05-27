@@ -189,14 +189,14 @@
     const TOOL_TEXT = {
         hvac: {
             title: {
-                nl: "HVAC gebouwconcept",
-                en: "HVAC building concept",
-                fr: "Concept HVAC bâtiment"
+                nl: "Gebouwtechnieken conceptcheck",
+                en: "Building-services concept check",
+                fr: "Concept techniques du bâtiment"
             },
             description: {
-                nl: "Wizard voor volledige gebouwconcepten: ruimtestaat, ventilatie, verwarming, koeling, schachten en cleanroomzones.",
-                en: "Wizard for whole-building concepts: room schedule, ventilation, heating, cooling, shafts and cleanroom zones.",
-                fr: "Assistant pour concepts bâtiment : locaux, ventilation, chauffage, refroidissement, gaines et zones cleanroom."
+                nl: "Eerste conceptscreening voor ventilatie, verwarming, koeling, schachten, druk-/geluidsrisico en technische zones.",
+                en: "First concept screening for ventilation, heating, cooling, shafts, pressure/noise risk and technical zones.",
+                fr: "Premier screening conceptuel pour ventilation, chauffage, refroidissement, gaines, pression/bruit et zones techniques."
             }
         },
         renovation: {
