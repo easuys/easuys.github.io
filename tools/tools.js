@@ -65,7 +65,8 @@
             largeSpan: "Grote overspanning: vervorming en uitvoerbaarheid controleren.",
             newLoads: "Nieuwe of hogere lasten: bestaande structuur opnieuw beoordelen.",
             ctaSubject: "Vraag over EA Suys rekentools",
-            ctaBody: "Beste,\n\nGraag bespreek ik een project op basis van de online rekentools.\n\nProject:\n"
+            ctaBody: "Beste,\n\nGraag bespreek ik een project op basis van de online rekentools.\n\nProject:\n",
+            mailFallback: "Opent er geen mailvenster? Mail naar info@easuys.be met deze projectnaam en voeg eventueel de bewaarde invoer toe."
         },
         en: {
             locale: "en-GB",
@@ -122,7 +123,8 @@
             largeSpan: "Large span: check deflection and buildability.",
             newLoads: "New or higher loads: reassess the existing structure.",
             ctaSubject: "Question about EA Suys calculation tools",
-            ctaBody: "Dear,\n\nI would like to discuss a project based on the online calculation tools.\n\nProject:\n"
+            ctaBody: "Dear,\n\nI would like to discuss a project based on the online calculation tools.\n\nProject:\n",
+            mailFallback: "If no mail window opens, email info@easuys.be with this project name and optionally attach the saved input."
         },
         fr: {
             locale: "fr-BE",
@@ -179,7 +181,8 @@
             largeSpan: "Grande portée : vérifier flèche et faisabilité.",
             newLoads: "Charges nouvelles ou accrues : réévaluer la structure existante.",
             ctaSubject: "Question sur les outils de calcul EA Suys",
-            ctaBody: "Bonjour,\n\nJe souhaite discuter d'un projet sur base des outils de calcul en ligne.\n\nProjet :\n"
+            ctaBody: "Bonjour,\n\nJe souhaite discuter d'un projet sur base des outils de calcul en ligne.\n\nProjet :\n",
+            mailFallback: "Si aucune fenêtre mail ne s'ouvre, envoyez un mail à info@easuys.be avec ce nom de projet et éventuellement l'entrée sauvegardée."
         }
     };
 
@@ -346,7 +349,23 @@
             dehumidification: "Ontvochtiging",
             latentCooling: "Latente koeling",
             coolingInclFan: "Koeling incl. vocht/fan",
-            leakage: "Lek/transfer"
+            leakage: "Lek/transfer",
+            recirculation: "Recirculatie",
+            outdoorAirFraction: "Aandeel buitenlucht",
+            heatingCoil: "Batterij verwarming",
+            coolingCoil: "Batterij koeling",
+            condensate: "Condensaat",
+            soundRisk: "Geluidsrisico",
+            fanSound: "Ventilatorgeluid",
+            pressureComponents: "Drukverliesopbouw",
+            equipmentDirection: "Toestelrichting",
+            role: "Rol",
+            basis: "Basis",
+            direction: "Richting",
+            examples: "Voorbeelden",
+            link: "Link",
+            status: "Status",
+            openLink: "Open fiche"
         },
         en: {
             indoorTemp: "Indoor temperature",
@@ -435,7 +454,23 @@
             dehumidification: "Dehumidification",
             latentCooling: "Latent cooling",
             coolingInclFan: "Cooling incl. moisture/fan",
-            leakage: "Leak/transfer"
+            leakage: "Leak/transfer",
+            recirculation: "Recirculation",
+            outdoorAirFraction: "Outdoor-air share",
+            heatingCoil: "Heating coil",
+            coolingCoil: "Cooling coil",
+            condensate: "Condensate",
+            soundRisk: "Sound risk",
+            fanSound: "Fan sound",
+            pressureComponents: "Pressure breakdown",
+            equipmentDirection: "Equipment direction",
+            role: "Role",
+            basis: "Basis",
+            direction: "Direction",
+            examples: "Examples",
+            link: "Link",
+            status: "Status",
+            openLink: "Open sheet"
         },
         fr: {
             indoorTemp: "Température intérieure",
@@ -524,13 +559,29 @@
             dehumidification: "Déshumidification",
             latentCooling: "Froid latent",
             coolingInclFan: "Froid incl. humidité/vent.",
-            leakage: "Fuite/transfert"
+            leakage: "Fuite/transfert",
+            recirculation: "Recirculation",
+            outdoorAirFraction: "Part d'air neuf",
+            heatingCoil: "Batterie chaude",
+            coolingCoil: "Batterie froide",
+            condensate: "Condensats",
+            soundRisk: "Risque acoustique",
+            fanSound: "Bruit ventilateur",
+            pressureComponents: "Pertes de charge",
+            equipmentDirection: "Orientation appareils",
+            role: "Rôle",
+            basis: "Base",
+            direction: "Orientation",
+            examples: "Exemples",
+            link: "Lien",
+            status: "Statut",
+            openLink: "Ouvrir fiche"
         }
     };
 
     const DEFAULTS = {
         hvac: {
-            projectName: "Competentiepool concept",
+            projectName: "Concept",
             indoorWinterTemp: 20,
             outdoorWinterTemp: -8,
             indoorSummerTemp: 26,
@@ -788,6 +839,15 @@
     const optionLabel = (options, value, lang) => {
         const found = options.find(([key]) => key === value);
         return found ? textFor(found[1], lang) : value;
+    };
+
+    const soundLevelLabel = (level, lang) => {
+        const levels = {
+            nl: { laag: "laag", matig: "matig", hoog: "hoog" },
+            en: { laag: "low", matig: "medium", hoog: "high" },
+            fr: { laag: "faible", matig: "moyen", hoog: "élevé" }
+        };
+        return (levels[lang] || levels.nl)[level] || level || "-";
     };
 
     const appState = {
@@ -1059,12 +1119,19 @@
         </div>
     `;
 
+    const tableCell = (cell) => {
+        if (cell && typeof cell === "object" && cell.href) {
+            return `<a href="${escapeHtml(cell.href)}" target="_blank" rel="noopener">${escapeHtml(cell.text || cell.href)}</a>`;
+        }
+        return escapeHtml(cell);
+    };
+
     const detailTable = (headers, rows) => `
         <div class="table-scroll">
             <table class="tool-result-table">
                 <thead><tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead>
                 <tbody>
-                    ${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}
+                    ${rows.map((row) => `<tr>${row.map((cell) => `<td>${tableCell(cell)}</td>`).join("")}</tr>`).join("")}
                 </tbody>
             </table>
         </div>
@@ -1163,24 +1230,36 @@
             `${formatValue(room.humidificationKgH, "kg/h", lang, 2)} / ${formatValue(room.dehumidificationKgH, "kg/h", lang, 2)}`,
             room.filterConcept || ""
         ]);
-        const productRows = (result.productReferences || []).map((item) => [
-            item.family,
-            item.examples,
-            item.url,
+        const equipmentRows = (result.equipmentSelection || result.productReferences || []).map((item) => [
+            item.role || item.family,
+            item.basis || item.examples,
+            item.direction || item.note,
+            item.examples || "",
+            item.url ? { href: item.url, text: l.openLink } : "",
+            item.status || item.note || ""
+        ]);
+        const pressureRows = (result.pressureComponents || []).map((item) => [
+            item.component,
+            formatValue(item.pressurePa, "Pa", lang, 0),
             item.note
         ]);
         const roomWarnings = (result.rooms || []).flatMap((room) => (room.warnings || []).map((warning) => `${room.name}: ${warning}`));
+        const sound = result.sound || {};
         return {
             warnings: (result.warnings || []).concat(roomWarnings),
             cards: [
                 { label: l.ahuFlow, value: formatValue(totals.supplyM3H, "m³/h", lang, 0), detail: `${l.extract}: ${formatValue(totals.extractM3H, "m³/h", lang, 0)}` },
                 { label: l.outdoorAir, value: formatValue(totals.outdoorAirM3H, "m³/h", lang, 0), detail: `${l.heatRecovery} ${formatValue((result.conditions || {}).heatRecoveryPercent, "%", lang, 0)}` },
+                { label: l.outdoorAirFraction, value: formatValue(totals.outdoorAirFractionPercent, "%", lang, 0), detail: `${l.recirculation}: ${formatValue(totals.recirculationM3H, "m³/h", lang, 0)}` },
                 { label: l.heating, value: formatValue(totals.heatingKw, "kW", lang, 1), detail: "concept" },
                 { label: l.cooling, value: formatValue(totals.coolingKw, "kW", lang, 1), detail: "concept" },
                 { label: l.coolingInclFan, value: formatValue(totals.coolingWithLatentAndFanKw, "kW", lang, 1), detail: `${l.latentCooling} ${formatValue(totals.latentCoolingKw, "kW", lang, 1)}` },
+                { label: l.heatingCoil, value: formatValue(totals.heatingCoilKw, "kW", lang, 1), detail: `${l.heatRecovery} ${formatValue((result.conditions || {}).winterAfterRecoveryC, "°C", lang, 1)}` },
+                { label: l.coolingCoil, value: formatValue(totals.coolingCoilKw, "kW", lang, 1), detail: `${l.condensate} ${formatValue(totals.condensateLH, "l/h", lang, 1)}` },
                 { label: l.fanPower, value: formatValue(totals.fanPowerKw, "kW", lang, 2), detail: `${l.sfp} ${formatValue(totals.sfpKwPerM3S, "kW/(m³/s)", lang, 2)}` },
                 { label: l.humidification, value: formatValue(totals.humidificationKgH, "kg/h", lang, 2), detail: `${l.dehumidification} ${formatValue(totals.dehumidificationKgH, "kg/h", lang, 2)}` },
                 { label: l.pressureDrop, value: formatValue(totals.pressureDropPa, "Pa", lang, 0), detail: `${l.cleanroomLeakage}: ${formatValue(totals.cleanroomLeakageM3H, "m³/h", lang, 0)}` },
+                { label: l.soundRisk, value: soundLevelLabel(sound.level, lang), detail: `${l.fanSound} ${formatValue(sound.indicativeFanSoundPowerDbA, "dB(A)", lang, 0)}` },
                 { label: l.shaftSize, value: `${formatNumber((totals.indicativeShaftMm || {}).width, lang, 0)} × ${formatNumber((totals.indicativeShaftMm || {}).height, lang, 0)} mm`, detail: `${l.ductDiameter}: ${formatValue(totals.mainDuctDiameterMm, "mm", lang, 0)}` }
             ],
             table: [
@@ -1188,8 +1267,10 @@
                     [l.roomName, l.roomType, l.supply, l.extract, l.ach, l.pressureRole, l.leakage, l.heating, l.cooling, `${l.humidification}/${l.dehumidification}`, l.productDirection],
                     roomRows
                 ),
-                `<h3>${escapeHtml(l.productDirection)}</h3>`,
-                detailTable([LANGS[lang].note, "Voorbeelden", "URL", "Status"], productRows)
+                `<h3>${escapeHtml(l.pressureComponents)}</h3>`,
+                detailTable([l.component, l.pressureDrop, LANGS[lang].note], pressureRows),
+                `<h3>${escapeHtml(l.equipmentDirection)}</h3>`,
+                detailTable([l.role, l.basis, l.direction, l.examples, l.link, l.status], equipmentRows)
             ].join("")
         };
     };
@@ -1458,6 +1539,7 @@
         document.querySelector("[data-tool-description]").textContent = textFor(tool.description, lang);
         document.querySelector("[data-tool-form]").innerHTML = formRenderers[toolId](lang);
         document.querySelector("[data-message]").textContent = appState.message;
+        if (typeof updateStudyMailLink === "function") updateStudyMailLink();
         renderResults();
     };
 
@@ -1501,6 +1583,20 @@
         renderResults();
     };
 
+    const buildStudyMailHref = () => {
+        const state = getFormState();
+        const projectName = state.projectName || "Concept";
+        const toolTitle = textFor(TOOL_TEXT[appState.activeTool].title, appState.lang);
+        const subject = encodeURIComponent(`${LANGS[appState.lang].ctaSubject} - ${projectName}`);
+        const body = encodeURIComponent(`${LANGS[appState.lang].ctaBody}${projectName}\n\nTool: ${toolTitle}\n`);
+        return `mailto:info@easuys.be?subject=${subject}&body=${body}`;
+    };
+
+    const updateStudyMailLink = () => {
+        const mailLink = document.querySelector("[data-mail]");
+        if (mailLink) mailLink.setAttribute("href", buildStudyMailHref());
+    };
+
     const initApp = () => {
         const app = document.querySelector("[data-tool-app]");
         if (!app) return;
@@ -1521,9 +1617,16 @@
         renderTabs();
         const hashTool = window.location.hash ? window.location.hash.slice(1) : "";
         renderTool(TOOL_TEXT[hashTool] ? hashTool : appState.activeTool);
+        updateStudyMailLink();
 
-        document.querySelector("[data-tool-form]").addEventListener("input", scheduleRenderResults);
-        document.querySelector("[data-tool-form]").addEventListener("change", scheduleRenderResults);
+        document.querySelector("[data-tool-form]").addEventListener("input", () => {
+            updateStudyMailLink();
+            scheduleRenderResults();
+        });
+        document.querySelector("[data-tool-form]").addEventListener("change", () => {
+            updateStudyMailLink();
+            scheduleRenderResults();
+        });
         document.querySelector("[data-calculate]").addEventListener("click", renderResults);
         document.querySelector("[data-print]").addEventListener("click", () => window.print());
         document.querySelector("[data-save]").addEventListener("click", saveStateToFile);
@@ -1560,9 +1663,9 @@
             event.target.value = "";
         });
         document.querySelector("[data-mail]").addEventListener("click", () => {
-            const subject = encodeURIComponent(LANGS[appState.lang].ctaSubject);
-            const body = encodeURIComponent(`${LANGS[appState.lang].ctaBody}${getFormState().projectName || ""}`);
-            window.location.href = `mailto:info@easuys.be?subject=${subject}&body=${body}`;
+            updateStudyMailLink();
+            appState.message = LANGS[appState.lang].mailFallback;
+            document.querySelector("[data-message]").textContent = appState.message;
         });
     };
 

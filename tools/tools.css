@@ -1,6 +1,7 @@
 .tools-page {
     background-color: #f5f2eb;
     background-image: none;
+    overflow-x: hidden;
 }
 
 .site-header-tools {
@@ -83,6 +84,8 @@
     grid-template-columns: 260px minmax(0, 1fr);
     gap: 20px;
     align-items: start;
+    width: 100%;
+    max-width: 100%;
     min-width: 0;
 }
 
@@ -97,16 +100,22 @@
 .tool-tabs button,
 .tool-action,
 .tool-upload-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: #ffffff;
     color: var(--ink);
     padding: 10px 12px;
     font: inherit;
+    text-decoration: none;
     cursor: pointer;
 }
 
 .tool-tabs button {
+    width: 100%;
+    min-width: 0;
     text-align: left;
     line-height: 1.25;
     overflow-wrap: anywhere;
@@ -119,7 +128,10 @@
 }
 
 .tool-panel {
+    width: 100%;
+    max-width: 100%;
     min-width: 0;
+    overflow: hidden;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: #ffffff;
@@ -247,6 +259,12 @@
 
 .tool-result-table td {
     color: var(--muted);
+}
+
+.tool-result-table a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
 .tool-actions {
@@ -408,12 +426,24 @@
 }
 
 @media (max-width: 600px) {
+    .tools-page .page {
+        padding-right: 36px;
+    }
+
     .tools-hero h1 {
         font-size: 28px;
     }
 
+    .tools-disclaimer,
+    .tool-shell,
+    .tool-tabs,
+    .tool-panel {
+        width: calc(100% - 36px);
+        max-width: calc(100% - 36px);
+    }
+
     .tool-tabs {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .tool-panel {
