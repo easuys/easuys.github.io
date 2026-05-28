@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+  <title id="title">Localized grille CFD workflow schematic</title>
+  <desc id="desc">A small room with a supply grille, extract grille, workbench source zone and occupied-zone concentration check.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2b5f73"/>
+    </marker>
+    <linearGradient id="roomFill" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8fbfb"/>
+      <stop offset="1" stop-color="#e6eee9"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="720" fill="#f6f3ec"/>
+  <rect x="72" y="86" width="816" height="548" rx="18" fill="#fffdf8" stroke="#d6d1c6" stroke-width="3"/>
+  <text x="96" y="138" fill="#1a232b" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">Public-safe CFD workflow demonstrator</text>
+  <text x="96" y="176" fill="#5a6772" font-family="Segoe UI, Arial, sans-serif" font-size="20">Localized supply, extract and workbench-source screening</text>
+
+  <g transform="translate(118 228)">
+    <polygon points="80,40 545,40 625,105 160,105" fill="#dbe8ea" stroke="#82969a" stroke-width="3"/>
+    <polygon points="160,105 625,105 625,345 160,345" fill="url(#roomFill)" stroke="#82969a" stroke-width="3"/>
+    <polygon points="80,40 160,105 160,345 80,275" fill="#edf3f1" stroke="#82969a" stroke-width="3"/>
+    <polygon points="545,40 625,105 625,345 545,275" fill="#e1ebe8" stroke="#82969a" stroke-width="3"/>
+
+    <rect x="104" y="105" width="56" height="82" rx="6" fill="#2b5f73"/>
+    <text x="36" y="220" fill="#1a232b" font-family="Segoe UI, Arial, sans-serif" font-size="18">Supply grille</text>
+
+    <rect x="625" y="255" width="58" height="74" rx="6" fill="#7f3f35"/>
+    <text x="592" y="370" fill="#1a232b" font-family="Segoe UI, Arial, sans-serif" font-size="18">Extract</text>
+
+    <rect x="284" y="255" width="170" height="42" rx="8" fill="#7b8a55" opacity="0.92"/>
+    <rect x="317" y="216" width="74" height="42" rx="8" fill="#9aa96d" opacity="0.92"/>
+    <text x="268" y="330" fill="#1a232b" font-family="Segoe UI, Arial, sans-serif" font-size="18">Workbench source</text>
+
+    <ellipse cx="405" cy="176" rx="126" ry="44" fill="#f2c15a" opacity="0.38" stroke="#c79321" stroke-width="2"/>
+    <text x="320" y="184" fill="#1a232b" font-family="Segoe UI, Arial, sans-serif" font-size="17">occupied-zone check</text>
+
+    <path d="M 160 137 C 250 110, 330 110, 420 144 S 565 206, 620 285" fill="none" stroke="#2b5f73" stroke-width="9" stroke-linecap="round" marker-end="url(#arrow)" opacity="0.76"/>
+    <path d="M 161 165 C 260 168, 300 204, 350 237 S 475 284, 620 295" fill="none" stroke="#5592a6" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow)" opacity="0.7"/>
+    <path d="M 388 238 C 442 226, 502 238, 558 276" fill="none" stroke="#7f3f35" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)" opacity="0.72"/>
+  </g>
+
+  <g transform="translate(118 610)" font-family="Segoe UI, Arial, sans-serif">
+    <rect x="0" y="-58" width="724" height="62" rx="10" fill="#f8f5ee" stroke="#d6d1c6"/>
+    <text x="22" y="-32" fill="#1a232b" font-size="18" font-weight="700">Validation status</text>
+    <text x="22" y="-9" fill="#5a6772" font-size="16">Workflow and mass-balance demonstrator only; not certification or a design note.</text>
+  </g>
+</svg>
