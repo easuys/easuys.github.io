@@ -289,6 +289,115 @@
     color: #ffffff;
 }
 
+.study-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(35, 40, 38, 0.46);
+}
+
+.study-dialog-backdrop[hidden] {
+    display: none;
+}
+
+.study-dialog {
+    width: min(520px, 100%);
+    max-height: min(720px, calc(100vh - 48px));
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+.study-dialog form {
+    display: grid;
+    gap: 14px;
+}
+
+.study-dialog-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.study-dialog h2,
+.study-dialog p {
+    margin: 0;
+}
+
+.study-dialog h2 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.study-dialog p {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.study-dialog-close {
+    inline-size: 36px;
+    block-size: 36px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: #ffffff;
+    color: var(--ink);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.study-field {
+    display: grid;
+    gap: 7px;
+}
+
+.study-field span,
+.study-consent {
+    font-size: 14px;
+}
+
+.study-field input {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 10px;
+    font: inherit;
+    background: #fbfaf7;
+}
+
+.study-consent {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    line-height: 1.35;
+}
+
+.study-turnstile {
+    min-height: 65px;
+}
+
+.study-status {
+    min-height: 20px;
+    font-size: 13px;
+}
+
+.study-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
 .tool-action:hover,
 .tool-upload-label:hover {
     border-color: var(--accent-strong);
@@ -455,7 +564,8 @@
     }
 
     .tool-action,
-    .tool-upload-label {
+    .tool-upload-label,
+    .study-actions .tool-action {
         width: 100%;
         text-align: center;
     }

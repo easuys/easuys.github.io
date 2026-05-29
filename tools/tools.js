@@ -69,7 +69,18 @@
             newLoads: "Nieuwe of hogere lasten: bestaande structuur opnieuw beoordelen.",
             ctaSubject: "Vraag over EA Suys rekentools",
             ctaBody: "Beste,\n\nGraag bespreek ik een project op basis van de online rekentools.\n\nProject:\n",
-            mailFallback: "Opent er geen mailvenster? Mail naar info@easuys.be met deze projectnaam en voeg eventueel de bewaarde invoer toe."
+            mailFallback: "Opent er geen mailvenster? Mail naar info@easuys.be met deze projectnaam en voeg eventueel de bewaarde invoer toe.",
+            requestTitle: "Studie aanvragen",
+            requestIntro: "Verifieer de aanvraag en open daarna een e-mailconcept.",
+            email: "E-mail",
+            leadTrackingConsent: "Anonieme interesse registreren",
+            sendRequest: "Verifieer en open e-mail",
+            cancel: "Annuleer",
+            emailDirect: "E-mail rechtstreeks",
+            verificationLoading: "Verificatie laadt...",
+            verificationRequired: "Rond de verificatie af.",
+            requestReady: "Aanvraag gecontroleerd. E-mailconcept wordt geopend.",
+            requestFailed: "Aanvraag kon niet worden gecontroleerd."
         },
         en: {
             locale: "en-GB",
@@ -130,7 +141,18 @@
             newLoads: "New or higher loads: reassess the existing structure.",
             ctaSubject: "Question about EA Suys calculation tools",
             ctaBody: "Dear,\n\nI would like to discuss a project based on the online calculation tools.\n\nProject:\n",
-            mailFallback: "If no mail window opens, email info@easuys.be with this project name and optionally attach the saved input."
+            mailFallback: "If no mail window opens, email info@easuys.be with this project name and optionally attach the saved input.",
+            requestTitle: "Request a study",
+            requestIntro: "Verify the request, then open an email draft.",
+            email: "Email",
+            leadTrackingConsent: "Record anonymous interest",
+            sendRequest: "Verify and open email",
+            cancel: "Cancel",
+            emailDirect: "Email directly",
+            verificationLoading: "Verification loading...",
+            verificationRequired: "Complete the verification.",
+            requestReady: "Request checked. Opening email draft.",
+            requestFailed: "The request could not be checked."
         },
         fr: {
             locale: "fr-BE",
@@ -191,7 +213,18 @@
             newLoads: "Charges nouvelles ou accrues : réévaluer la structure existante.",
             ctaSubject: "Question sur les outils de calcul EA Suys",
             ctaBody: "Bonjour,\n\nJe souhaite discuter d'un projet sur base des outils de calcul en ligne.\n\nProjet :\n",
-            mailFallback: "Si aucune fenêtre mail ne s'ouvre, envoyez un mail à info@easuys.be avec ce nom de projet et éventuellement l'entrée sauvegardée."
+            mailFallback: "Si aucune fenêtre mail ne s'ouvre, envoyez un mail à info@easuys.be avec ce nom de projet et éventuellement l'entrée sauvegardée.",
+            requestTitle: "Demander une étude",
+            requestIntro: "Vérifiez la demande, puis ouvrez un brouillon d'e-mail.",
+            email: "E-mail",
+            leadTrackingConsent: "Enregistrer un intérêt anonyme",
+            sendRequest: "Vérifier et ouvrir l'e-mail",
+            cancel: "Annuler",
+            emailDirect: "E-mail direct",
+            verificationLoading: "Vérification en cours...",
+            verificationRequired: "Terminez la vérification.",
+            requestReady: "Demande vérifiée. Ouverture du brouillon d'e-mail.",
+            requestFailed: "La demande n'a pas pu être vérifiée."
         }
     };
 
@@ -1231,6 +1264,9 @@
     }
 
     const API_BASE_URL = "https://easuys-tools-api.yellow-violet-f185.workers.dev";
+    const TURNSTILE_SITE_KEY = "0x4AAAAAADYeVJCZgqihubKs";
+    const TURNSTILE_SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    const LEAD_ENDPOINT = "/lead/study-request";
     const API_ENDPOINTS = {
         conceptcheck: "/calculate/building-tech-conceptcheck",
         projectIntake: "/calculate/project-intake-checklist",
@@ -1316,8 +1352,11 @@
         lang: "nl",
         activeTool: "renovation",
         message: "",
-        lastReportPayload: null
+        lastReportPayload: null,
+        turnstileWidgetId: null,
+        turnstileToken: ""
     };
+    let turnstileScriptPromise = null;
 
     const formatNumber = (value, lang = "nl", decimals = 1) => {
         if (!Number.isFinite(value)) return "-";
@@ -1852,6 +1891,171 @@
         if (!REPORT_ENDPOINTS[toolId]) throw new CalculationError([LANGS[lang].reportUnavailable]);
         return postJson(REPORT_ENDPOINTS[toolId], payload, lang);
     };
+
+    const loadTurnstile = () => {
+        if (typeof window === "undefined") return Promise.reject(new Error("Turnstile unavailable"));
+        if (window.turnstile && typeof window.turnstile.render === "function") return Promise.resolve(window.turnstile);
+        if (turnstileScriptPromise) return turnstileScriptPromise;
+        turnstileScriptPromise = new Promise((resolve, reject) => {
+            const existing = document.querySelector(`script[src="${TURNSTILE_SCRIPT_URL}"]`);
+            const script = existing || document.createElement("script");
+            script.addEventListener("load", () => resolve(window.turnstile));
+            script.addEventListener("error", () => reject(new Error("Turnstile failed to load")));
+            if (!existing) {
+                script.src = TURNSTILE_SCRIPT_URL;
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+        });
+        return turnstileScriptPromise;
+    };
+
+    const ensureStudyDialog = () => {
+        let dialog = document.querySelector("[data-study-dialog]");
+        if (dialog) return dialog;
+        dialog = document.createElement("div");
+        dialog.className = "study-dialog-backdrop";
+        dialog.hidden = true;
+        dialog.dataset.studyDialog = "";
+        dialog.innerHTML = `
+            <div class="study-dialog" role="dialog" aria-modal="true" aria-labelledby="study-dialog-title">
+                <form data-study-form>
+                    <div class="study-dialog-header">
+                        <h2 id="study-dialog-title" data-study-title></h2>
+                        <button type="button" class="study-dialog-close" data-study-cancel aria-label="Close">×</button>
+                    </div>
+                    <p data-study-intro></p>
+                    <label class="study-field">
+                        <span data-study-email-label></span>
+                        <input type="email" data-study-email autocomplete="email" required>
+                    </label>
+                    <label class="study-consent">
+                        <input type="checkbox" data-study-consent>
+                        <span data-study-consent-label></span>
+                    </label>
+                    <div class="study-turnstile" data-turnstile-widget></div>
+                    <p class="study-status" data-study-status aria-live="polite"></p>
+                    <div class="study-actions">
+                        <button class="tool-action primary" type="submit" data-study-submit></button>
+                        <button class="tool-action" type="button" data-study-cancel></button>
+                        <a class="tool-action" data-study-fallback></a>
+                    </div>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+        dialog.addEventListener("click", (event) => {
+            if (event.target === dialog) closeStudyDialog();
+        });
+        dialog.querySelectorAll("[data-study-cancel]").forEach((button) => {
+            button.addEventListener("click", closeStudyDialog);
+        });
+        dialog.querySelector("[data-study-form]").addEventListener("submit", submitStudyRequest);
+        return dialog;
+    };
+
+    const removeTurnstileWidget = () => {
+        if (
+            appState.turnstileWidgetId !== null &&
+            window.turnstile &&
+            typeof window.turnstile.remove === "function"
+        ) {
+            window.turnstile.remove(appState.turnstileWidgetId);
+        }
+        appState.turnstileWidgetId = null;
+        appState.turnstileToken = "";
+    };
+
+    const closeStudyDialog = () => {
+        const dialog = document.querySelector("[data-study-dialog]");
+        if (!dialog) return;
+        removeTurnstileWidget();
+        dialog.hidden = true;
+    };
+
+    const openStudyDialog = async (event) => {
+        if (event) event.preventDefault();
+        const dialog = ensureStudyDialog();
+        const lang = appState.lang;
+        const text = LANGS[lang];
+        const state = getFormState();
+        dialog.querySelector("[data-study-title]").textContent = text.requestTitle;
+        dialog.querySelector("[data-study-intro]").textContent = text.requestIntro;
+        dialog.querySelector("[data-study-email-label]").textContent = text.email;
+        dialog.querySelector("[data-study-consent-label]").textContent = text.leadTrackingConsent;
+        dialog.querySelector("[data-study-submit]").textContent = text.sendRequest;
+        dialog.querySelector("[data-study-cancel]:not(.study-dialog-close)").textContent = text.cancel;
+        dialog.querySelector("[data-study-fallback]").textContent = text.emailDirect;
+        dialog.querySelector("[data-study-fallback]").setAttribute("href", buildStudyMailHref());
+        dialog.querySelector("[data-study-email]").value = state.email || "";
+        dialog.querySelector("[data-study-status]").textContent = text.verificationLoading;
+        dialog.hidden = false;
+        dialog.querySelector("[data-study-email]").focus();
+
+        try {
+            const turnstile = await loadTurnstile();
+            removeTurnstileWidget();
+            const widget = dialog.querySelector("[data-turnstile-widget]");
+            widget.innerHTML = "";
+            appState.turnstileWidgetId = turnstile.render(widget, {
+                sitekey: TURNSTILE_SITE_KEY,
+                callback: (token) => {
+                    appState.turnstileToken = token;
+                    dialog.querySelector("[data-study-status]").textContent = "";
+                },
+                "expired-callback": () => {
+                    appState.turnstileToken = "";
+                    dialog.querySelector("[data-study-status]").textContent = text.verificationRequired;
+                },
+                "error-callback": () => {
+                    appState.turnstileToken = "";
+                    dialog.querySelector("[data-study-status]").textContent = text.requestFailed;
+                }
+            });
+        } catch (error) {
+            dialog.querySelector("[data-study-status]").textContent = text.requestFailed;
+        }
+    };
+
+    async function submitStudyRequest(event) {
+        event.preventDefault();
+        const dialog = ensureStudyDialog();
+        const lang = appState.lang;
+        const text = LANGS[lang];
+        const status = dialog.querySelector("[data-study-status]");
+        if (!appState.turnstileToken) {
+            status.textContent = text.verificationRequired;
+            return;
+        }
+        const state = getFormState();
+        const projectName = state.projectName || "Concept";
+        const email = dialog.querySelector("[data-study-email]").value.trim();
+        const toolTitle = textFor(TOOL_TEXT[appState.activeTool].title, lang);
+        try {
+            const result = await postJson(LEAD_ENDPOINT, {
+                projectName,
+                email,
+                turnstileToken: appState.turnstileToken,
+                leadTrackingConsent: dialog.querySelector("[data-study-consent]").checked,
+                sourceTool: appState.activeTool,
+                tool: toolTitle,
+                locale: LANGS[lang].locale,
+                buildingType: state.buildingType,
+                hasGeneratedReport: Boolean(appState.lastReportPayload)
+            }, lang);
+            appState.message = text.requestReady;
+            document.querySelector("[data-message]").textContent = appState.message;
+            closeStudyDialog();
+            window.location.href = result.mailto || buildStudyMailHref();
+        } catch (error) {
+            appState.turnstileToken = "";
+            if (window.turnstile && appState.turnstileWidgetId !== null && typeof window.turnstile.reset === "function") {
+                window.turnstile.reset(appState.turnstileWidgetId);
+            }
+            status.textContent = (error.messages || [error.message || text.requestFailed]).join(" ");
+        }
+    }
 
     const conceptcheckPayload = (state, lang) => {
         const l = LABELS[lang];
@@ -2710,11 +2914,7 @@
             document.querySelector("[data-message]").textContent = appState.message;
             event.target.value = "";
         });
-        document.querySelector("[data-mail]").addEventListener("click", () => {
-            updateStudyMailLink();
-            appState.message = LANGS[appState.lang].mailFallback;
-            document.querySelector("[data-message]").textContent = appState.message;
-        });
+        document.querySelector("[data-mail]").addEventListener("click", openStudyDialog);
     };
 
     return {
