@@ -11,7 +11,7 @@ const TOOL_PAGES = [
 test("tools pages link to structural tools subdomain", async () => {
   for (const page of TOOL_PAGES) {
     const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
-    assert.match(html, /https:\/\/structural\.easuys\.be\//, page);
+    assert.match(html, /https:\/\/structural\.easuys\.com\//, page);
   }
 });
 
