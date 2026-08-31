@@ -289,6 +289,12 @@
     color: #ffffff;
 }
 
+.tool-action.is-disabled {
+    background: #f1f3f2;
+    color: var(--muted);
+    cursor: default;
+}
+
 .study-dialog-backdrop {
     position: fixed;
     inset: 0;
@@ -401,6 +407,10 @@
 .tool-action:hover,
 .tool-upload-label:hover {
     border-color: var(--accent-strong);
+}
+
+.tool-action.is-disabled:hover {
+    border-color: var(--line);
 }
 
 .tool-upload-label input {
