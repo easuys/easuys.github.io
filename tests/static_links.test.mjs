@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile as readRawFile } from "node:fs/promises";
 import { test } from "node:test";
+
+// Normalise Windows (core.autocrlf) checkouts so line-anchored checks behave as on CI.
+const readFile = async (...args) => (await readRawFile(...args)).replace(/\r\n/g, "\n");
 
 const TOOL_PAGES = [
   "tools/index.html",
@@ -172,4 +175,13 @@ test("pull-request CI is read-only, bounded and cannot deploy", async () => {
     workflow,
     /\b(secrets|deploy|deployment|pages: write|id-token: write)\b/i,
   );
+});
+
+test("home pages link to the retaining technical preview and a project enquiry", async () => {
+  for (const page of HOME_PAGES) {
+    const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
+    assert.match(html, /href="https:\/\/www\.easuys\.be\/easuys-retaining-tools-web\/"/, page);
+    assert.match(html, /class="button-link" href="mailto:info@easuys\.be\?subject=/, page);
+    assert.match(html, /href="tools\/(index-(en|fr)\.html)?"/, page);
+  }
 });

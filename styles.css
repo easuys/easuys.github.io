@@ -65,16 +65,29 @@ a:hover {
 
 .brand {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 16px;
+    gap: 10px 16px;
+    min-width: 0;
 }
 
 .logo {
-    width: 72px;
-    border-radius: 14px;
+    /* images/logo.jpg is a 280x55 wordmark that already reads "EA Suys" */
+    width: auto;
+    height: 52px;
+    border-radius: 12px;
     box-shadow: 0 10px 25px rgba(16, 24, 35, 0.12);
     background: var(--paper-bright);
-    padding: 8px;
+    padding: 8px 12px;
+}
+
+.brand .brand-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
 }
 
 .brand-name {
@@ -174,6 +187,18 @@ a:hover {
     color: var(--muted);
 }
 
+.contact-card {
+    align-items: center;
+}
+
+.contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    font-size: 15px;
+}
+
 .section {
     margin-top: 48px;
 }
@@ -223,7 +248,7 @@ a:hover {
 
 .service-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 18px;
 }
 
@@ -375,6 +400,15 @@ a:hover {
 
     .hero h1 {
         font-size: 28px;
+    }
+
+    .logo {
+        height: 40px;
+        padding: 6px 9px;
+    }
+
+    .brand-tagline {
+        letter-spacing: 0.12em;
     }
 
     .gallery-item img {
