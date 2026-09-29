@@ -185,3 +185,10 @@ test("home pages link to the retaining technical preview and a project enquiry",
     assert.match(html, /href="tools\/(index-(en|fr)\.html)?"/, page);
   }
 });
+
+test("home pages do not state that commercial-software validation is pending", async () => {
+  for (const page of HOME_PAGES) {
+    const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
+    assert.doesNotMatch(html, /commerci(al|ële|aux)|loopt nog|still pending|est en cours/i, page);
+  }
+});
