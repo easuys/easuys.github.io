@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Early-age concrete and fire: advanced analysis at EA Suys - easuys .be</title>
+    <meta name="description" content="How EA Suys analyses the cracking risk of massive concrete and the behaviour of structures in fire, checked against the Eurocodes and analytical solutions.">
+    <meta name="author" content="EA Suys bv">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="EA Suys">
+    <meta property="og:title" content="Early-age concrete and fire: advanced analysis at EA Suys">
+    <meta property="og:description" content="Cracking risk of massive concrete and structural behaviour in fire, analysed and checked.">
+    <meta property="og:url" content="https://www.easuys.be/nieuws/fire-and-early-age-concrete.html">
+    <meta property="og:image" content="https://www.easuys.be/images/nieuws_jong_beton_en.png">
+    <meta property="og:locale" content="en_GB">
+    <meta name="theme-color" content="#2b4c65">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="canonical" href="https://www.easuys.be/nieuws/fire-and-early-age-concrete.html">
+    <link rel="alternate" hreflang="nl-be" href="https://www.easuys.be/nieuws/brand-en-jong-beton.html">
+    <link rel="alternate" hreflang="en-gb" href="https://www.easuys.be/nieuws/fire-and-early-age-concrete.html">
+    <link rel="alternate" hreflang="fr-be" href="https://www.easuys.be/nieuws/incendie-et-beton-jeune.html">
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "Early-age concrete and fire: advanced analysis at EA Suys",
+          "datePublished": "2026-10-06",
+          "author": {"@type": "Organization", "name": "EA Suys"},
+          "url": "https://www.easuys.be/nieuws/fire-and-early-age-concrete.html"
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+</head>
+<body>
+    <div class="page">
+        <header class="site-header">
+            <div class="brand">
+                <img class="logo" src="../images/logo.jpg" alt="EA Suys logo">
+                <div>
+                    <div class="brand-name">EA Suys</div>
+                    <div class="brand-tagline">Structures &amp; building services</div>
+                </div>
+            </div>
+            <nav class="lang-switch" aria-label="Languages">
+                <a href="brand-en-jong-beton.html">NL</a>
+                <a href="fire-and-early-age-concrete.html" aria-current="page">EN</a>
+                <a href="incendie-et-beton-jeune.html">FR</a>
+            </nav>
+        </header>
+        <main>
+            <section class="hero">
+                <h1>Massive concrete without surprises, structures that withstand a fire</h1>
+                <p>Two questions come up again and again on larger concrete works and buildings. Will a thick wall crack while it hardens? And how long does a structure stay up in a fire? For both we have built our own, fully documented analysis chain on an open-source finite element package, checked against the Eurocodes, independent reference calculations and analytical solutions.</p>
+                <div class="hero-meta">
+                    <span>Early-age concrete</span>
+                    <span>Fire resistance</span>
+                    <span>Eurocodes</span>
+                    <span>6 October 2026</span>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Early-age concrete: heat, cooling and cracks</h2>
+                <p>Hardening concrete releases a lot of heat. Without cooling, the core of a 1.2&nbsp;m wall reaches about 60&nbsp;°C, while the faces and the older slab below stay cooler. That restraint causes tensile stresses and possibly cracks that affect watertightness and durability.</p>
+                <p>We calculate the temperature history per season, with or without cooling pipes, the hardening, shrinkage and creep to Eurocode&nbsp;2, the cracking risk and – with explicit crack models – the crack width. For a tunnel wall from practice, our temperatures lie within 1 to 2&nbsp;°C of an independent reference calculation, with the same conclusion on the need for cooling.</p>
+                <ul>
+                    <li><strong>Cooling works:</strong> without cooling, the core of a summer pour reaches 61&nbsp;°C and the core crack index rises to 1.1 (cracks expected); with cooling pipes the core stays at 49&nbsp;°C and the index at 0.63, below the 0.7 limit (see figure).</li>
+                    <li><strong>Crack width:</strong> with the degree of restraint from the analysis and Eurocode&nbsp;2 part&nbsp;3 (annex&nbsp;M), the reinforcement studied gives a crack width of about 0.07&nbsp;mm. Explicit crack models also calculate the cracks themselves: their number, position and opening.</li>
+                    <li><strong>Calibration on site measurements:</strong> with two thermocouples (core and formwork) we recover the heat release, its rate and the heat exchange to within 1&nbsp;%, also with measurement noise.</li>
+                    <li><strong>Tensile strength:</strong> tests on a tunnel concrete showed an early tensile strength well above the Eurocode value (twice as high after 1&nbsp;day, one and a half times after 7&nbsp;days). Using measured values gives a more realistic cracking risk.</li>
+                </ul>
+                <figure class="news-figure">
+                    <img src="../images/nieuws_jong_beton_en.png" alt="Temperature and crack index in the core of a 1.2 m thick wall, with and without cooling pipes" width="1170" height="442" loading="lazy">
+                    <figcaption>Core of a 1.2&nbsp;m thick wall cast in summer. Left: temperature; right: crack index (tensile stress divided by the tensile strength at that time). With cooling pipes the index stays below 0.7.</figcaption>
+                </figure>
+            </section>
+
+            <section class="section">
+                <h2>Fire: beyond the tables</h2>
+                <p>Besides tables, the Eurocodes allow advanced calculation methods: the heating of the cross-sections and the mechanical behaviour up to failure, with temperature-dependent material laws. This pays off for existing buildings with little concrete cover, for special shapes and for natural fire scenarios.</p>
+                <ul>
+                    <li><strong>Heating checked:</strong> temperatures in concrete and steel cross-sections follow the Eurocode reference solutions to within 1 to 5&nbsp;°C.</li>
+                    <li><strong>Steel beams:</strong> the calculated failure lies within 5&nbsp;°C of the analytical critical temperature. Steel columns with buckling follow buckling theory with the temperature-dependent steel law.</li>
+                    <li><strong>Concrete slab in an ISO fire:</strong> the advanced analysis gives 169&nbsp;minutes of fire resistance, against 144&nbsp;minutes with the simplified method. For existing buildings, that difference can save a renovation.</li>
+                    <li><strong>Cooling phase of a natural fire:</strong> concrete does not regain its strength. With a material law to the new Eurocode (FprEN 1992-1-2:2023) we also calculate what happens after the fire. A column loaded to 70&nbsp;% of its cold capacity survives the heating, but fails an hour after the peak of the fire, while the fire is already dying down. At 60&nbsp;% it stays up, with two thirds of its original capacity left. An independent check calculation gives the same times.</li>
+                </ul>
+                <figure class="news-figure">
+                    <img src="../images/nieuws_brand_en.png" alt="Stress-strain relation of C30/37 concrete at 20 °C, hot at 500 °C and after cooling from 600 °C" width="832" height="494" loading="lazy">
+                    <figcaption>C30/37 concrete: at 20&nbsp;°C, hot at 500&nbsp;°C and after cooling from 600&nbsp;°C. After the fire the concrete reaches only 0.9 times the strength it had at 600&nbsp;°C (FprEN 1992-1-2:2023). Dots: our analysis; lines: the Eurocode curves.</figcaption>
+                </figure>
+            </section>
+
+            <section class="section">
+                <h2>What does this mean for your project?</h2>
+                <ul>
+                    <li><strong>Massive concrete</strong> (basements, tunnels, retaining walls, raft foundations): need for cooling, casting sequence and crack-control reinforcement substantiated instead of estimated.</li>
+                    <li><strong>Fire safety:</strong> performance-based assessment of existing structures in renovation or change of use, and independent review of third-party calculations.</li>
+                    <li><strong>Transparent:</strong> every step is documented and checked against an independent reference. Every project application gets project-specific input and its own check.</li>
+                </ul>
+                <p>Questions about a specific project? Email <a href="mailto:info@easuys.be">info@easuys.be</a>.</p>
+                <p><a href="../index-en.html">Back to the home page</a></p>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div>EA Suys bv — Kapelle-op-den-Bos, BE</div>
+            <div><a href="mailto:info@easuys.be">info@easuys.be</a></div>
+        </footer>
+    </div>
+</body>
+</html>

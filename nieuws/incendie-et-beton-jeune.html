@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Béton jeune et incendie : calculs avancés chez EA Suys - easuys .be</title>
+    <meta name="description" content="Comment EA Suys calcule le risque de fissuration du béton massif et le comportement des structures en cas d'incendie, vérifié par rapport aux Eurocodes et à des solutions analytiques.">
+    <meta name="author" content="EA Suys bv">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="EA Suys">
+    <meta property="og:title" content="Béton jeune et incendie : calculs avancés chez EA Suys">
+    <meta property="og:description" content="Risque de fissuration du béton massif et comportement des structures en cas d'incendie, calculés et vérifiés.">
+    <meta property="og:url" content="https://www.easuys.be/nieuws/incendie-et-beton-jeune.html">
+    <meta property="og:image" content="https://www.easuys.be/images/nieuws_jong_beton_fr.png">
+    <meta property="og:locale" content="fr_BE">
+    <meta name="theme-color" content="#2b4c65">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="canonical" href="https://www.easuys.be/nieuws/incendie-et-beton-jeune.html">
+    <link rel="alternate" hreflang="nl-be" href="https://www.easuys.be/nieuws/brand-en-jong-beton.html">
+    <link rel="alternate" hreflang="en-gb" href="https://www.easuys.be/nieuws/fire-and-early-age-concrete.html">
+    <link rel="alternate" hreflang="fr-be" href="https://www.easuys.be/nieuws/incendie-et-beton-jeune.html">
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "Béton jeune et incendie : calculs avancés chez EA Suys",
+          "datePublished": "2026-10-06",
+          "author": {"@type": "Organization", "name": "EA Suys"},
+          "url": "https://www.easuys.be/nieuws/incendie-et-beton-jeune.html"
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+</head>
+<body>
+    <div class="page">
+        <header class="site-header">
+            <div class="brand">
+                <img class="logo" src="../images/logo.jpg" alt="EA Suys logo">
+                <div>
+                    <div class="brand-name">EA Suys</div>
+                    <div class="brand-tagline">Stabilité &amp; techniques</div>
+                </div>
+            </div>
+            <nav class="lang-switch" aria-label="Langues">
+                <a href="brand-en-jong-beton.html">NL</a>
+                <a href="fire-and-early-age-concrete.html">EN</a>
+                <a href="incendie-et-beton-jeune.html" aria-current="page">FR</a>
+            </nav>
+        </header>
+        <main>
+            <section class="hero">
+                <h1>Du béton massif sans surprises, des structures qui résistent au feu</h1>
+                <p>Deux questions reviennent souvent pour les ouvrages en béton et les bâtiments importants. Un voile épais va-t-il fissurer pendant son durcissement&nbsp;? Et combien de temps une structure reste-t-elle debout en cas d'incendie&nbsp;? Pour ces deux questions, nous avons développé notre propre chaîne de calcul, entièrement documentée, basée sur un logiciel d'éléments finis open source et vérifiée par rapport aux Eurocodes, à des calculs de référence indépendants et à des solutions analytiques.</p>
+                <div class="hero-meta">
+                    <span>Béton jeune</span>
+                    <span>Résistance au feu</span>
+                    <span>Eurocodes</span>
+                    <span>6 octobre 2026</span>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Béton jeune : chaleur, refroidissement et fissures</h2>
+                <p>Le béton qui durcit dégage beaucoup de chaleur. Sans refroidissement, le cœur d'un voile de 1,2&nbsp;m atteint environ 60&nbsp;°C, tandis que les parements et le radier plus ancien restent plus froids. Ce bridage engendre des contraintes de traction et, potentiellement, des fissures qui nuisent à l'étanchéité et à la durabilité.</p>
+                <p>Nous calculons l'évolution des températures par saison, avec ou sans tubes de refroidissement, le durcissement, le retrait et le fluage selon l'Eurocode&nbsp;2, le risque de fissuration et – avec des modèles de fissuration explicites – l'ouverture des fissures. Pour un voile de tunnel réel, nos températures se situent à 1 ou 2&nbsp;°C d'un calcul de référence indépendant, avec la même conclusion quant au besoin de refroidissement.</p>
+                <ul>
+                    <li><strong>Le refroidissement est efficace :</strong> sans refroidissement, le cœur d'un bétonnage estival atteint 61&nbsp;°C et l'indice de fissuration au cœur monte à 1,1 (fissures attendues)&nbsp;; avec des tubes de refroidissement, le cœur reste à 49&nbsp;°C et l'indice à 0,63, sous la limite de 0,7 (voir figure).</li>
+                    <li><strong>Ouverture des fissures :</strong> avec le degré de bridage issu du calcul et l'Eurocode&nbsp;2 partie&nbsp;3 (annexe&nbsp;M), l'armature étudiée donne une ouverture de fissure d'environ 0,07&nbsp;mm. Des modèles de fissuration explicites calculent en outre les fissures elles-mêmes&nbsp;: leur nombre, leur position et leur ouverture.</li>
+                    <li><strong>Calage sur mesures de chantier :</strong> avec deux thermocouples (cœur et coffrage), nous retrouvons le dégagement de chaleur, sa cinétique et l'échange thermique à moins de 1&nbsp;% près, même avec du bruit de mesure.</li>
+                    <li><strong>Résistance à la traction :</strong> des essais sur un béton de tunnel ont montré une résistance à la traction au jeune âge nettement supérieure à la valeur de l'Eurocode (le double après 1&nbsp;jour, une fois et demie après 7&nbsp;jours). Calculer avec des valeurs mesurées donne un risque de fissuration plus réaliste.</li>
+                </ul>
+                <figure class="news-figure">
+                    <img src="../images/nieuws_jong_beton_fr.png" alt="Température et indice de fissuration au cœur d'un voile de 1,2 m, avec et sans tubes de refroidissement" width="1170" height="442" loading="lazy">
+                    <figcaption>Cœur d'un voile de 1,2&nbsp;m bétonné en été. À gauche la température, à droite l'indice de fissuration (contrainte de traction divisée par la résistance à la traction à cet instant). Avec des tubes de refroidissement, l'indice reste sous 0,7.</figcaption>
+                </figure>
+            </section>
+
+            <section class="section">
+                <h2>Incendie : au-delà des tableaux</h2>
+                <p>Outre les tableaux, les Eurocodes autorisent des méthodes de calcul avancées&nbsp;: l'échauffement des sections et le comportement mécanique jusqu'à la ruine, avec des lois de matériau dépendant de la température. C'est intéressant pour les bâtiments existants avec un faible enrobage, pour les formes particulières et pour les scénarios d'incendie naturel.</p>
+                <ul>
+                    <li><strong>Échauffement vérifié :</strong> les températures dans les sections en béton et en acier suivent les solutions de référence des Eurocodes à 1 à 5&nbsp;°C près.</li>
+                    <li><strong>Poutres en acier :</strong> la ruine calculée se situe à moins de 5&nbsp;°C de la température critique analytique. Les colonnes en acier avec flambement suivent la théorie du flambement avec la loi de l'acier dépendant de la température.</li>
+                    <li><strong>Dalle en béton sous incendie ISO :</strong> le calcul avancé donne 169&nbsp;minutes de résistance au feu, contre 144&nbsp;minutes avec la méthode simplifiée. Pour un bâtiment existant, cette différence peut éviter une rénovation.</li>
+                    <li><strong>Phase de refroidissement d'un incendie naturel :</strong> le béton ne retrouve pas sa résistance. Avec une loi de matériau selon le nouvel Eurocode (FprEN 1992-1-2:2023), nous calculons aussi ce qui se passe après l'incendie. Une colonne chargée à 70&nbsp;% de sa capacité à froid résiste à l'échauffement, mais s'effondre une heure après le pic de l'incendie, alors que le feu s'éteint déjà. À 60&nbsp;%, elle reste debout, avec encore deux tiers de sa capacité initiale. Un calcul de contrôle indépendant donne les mêmes temps.</li>
+                </ul>
+                <figure class="news-figure">
+                    <img src="../images/nieuws_brand_fr.png" alt="Relation contrainte-déformation du béton C30/37 à 20 °C, à chaud à 500 °C et après refroidissement depuis 600 °C" width="832" height="494" loading="lazy">
+                    <figcaption>Béton C30/37&nbsp;: à 20&nbsp;°C, à chaud à 500&nbsp;°C et après refroidissement depuis 600&nbsp;°C. Après l'incendie, le béton n'atteint que 0,9 fois la résistance qu'il avait à 600&nbsp;°C (FprEN 1992-1-2:2023). Points&nbsp;: notre calcul&nbsp;; lignes&nbsp;: les courbes de l'Eurocode.</figcaption>
+                </figure>
+            </section>
+
+            <section class="section">
+                <h2>Qu'est-ce que cela signifie pour votre projet ?</h2>
+                <ul>
+                    <li><strong>Béton massif</strong> (caves, tunnels, murs de soutènement, radiers)&nbsp;: besoin de refroidissement, phasage du bétonnage et armatures contre la fissuration justifiés plutôt qu'estimés.</li>
+                    <li><strong>Sécurité incendie :</strong> vérification performantielle de structures existantes lors d'une rénovation ou d'un changement d'affectation, et contrôle indépendant de calculs de tiers.</li>
+                    <li><strong>Transparence :</strong> chaque étape est documentée et vérifiée par rapport à une référence indépendante. Chaque application à un projet reçoit des données propres au projet et sa propre vérification.</li>
+                </ul>
+                <p>Une question sur un projet concret&nbsp;? Écrivez à <a href="mailto:info@easuys.be">info@easuys.be</a>.</p>
+                <p><a href="../index-fr.html">Retour à la page d'accueil</a></p>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div>EA Suys bv — Kapelle-op-den-Bos, BE</div>
+            <div><a href="mailto:info@easuys.be">info@easuys.be</a></div>
+        </footer>
+    </div>
+</body>
+</html>

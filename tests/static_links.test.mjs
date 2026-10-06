@@ -43,6 +43,18 @@ const TOOL_ALTERNATES = [
   ["x-default", "https://www.easuys.be/tools/"],
 ];
 
+const NEWS_METADATA = [
+  ["nieuws/brand-en-jong-beton.html", "https://www.easuys.be/nieuws/brand-en-jong-beton.html"],
+  ["nieuws/fire-and-early-age-concrete.html", "https://www.easuys.be/nieuws/fire-and-early-age-concrete.html"],
+  ["nieuws/incendie-et-beton-jeune.html", "https://www.easuys.be/nieuws/incendie-et-beton-jeune.html"],
+];
+
+const NEWS_ALTERNATES = [
+  ["nl-be", "https://www.easuys.be/nieuws/brand-en-jong-beton.html"],
+  ["en-gb", "https://www.easuys.be/nieuws/fire-and-early-age-concrete.html"],
+  ["fr-be", "https://www.easuys.be/nieuws/incendie-et-beton-jeune.html"],
+];
+
 function canonicalUrls(html) {
   return [...html.matchAll(/<link rel="canonical" href="([^"]+)">/g)].map(
     (match) => match[1],
@@ -133,7 +145,7 @@ test("robots and sitemap advertise only indexable canonical pages", async () => 
   assert.match(robots, /^User-agent: \*\nAllow: \/\n\nSitemap: https:\/\/www\.easuys\.be\/sitemap\.xml\n$/);
   assert.deepEqual(
     [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]),
-    HOME_METADATA.map(([, canonical]) => canonical),
+    [...HOME_METADATA, ...NEWS_METADATA].map(([, canonical]) => canonical),
   );
   assert.doesNotMatch(sitemap, /\/tools\//);
 });
@@ -190,5 +202,36 @@ test("home pages do not state that commercial-software validation is pending", a
   for (const page of HOME_PAGES) {
     const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
     assert.doesNotMatch(html, /commerci(al|ële|aux)|loopt nog|still pending|est en cours/i, page);
+  }
+});
+
+test("news pages: canonical, hreflang, one Article, images present and linked from the home pages", async () => {
+  for (const [page, canonical] of NEWS_METADATA) {
+    const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
+    assert.deepEqual(canonicalUrls(html), [canonical], page);
+    assert.deepEqual(alternateUrls(html), NEWS_ALTERNATES, page);
+    assert.doesNotMatch(html, /https:\/\/easuys\.be\//, page);
+    assert.doesNotMatch(html, /\{\{|\}\}/, `${page}: unfilled placeholder`);
+
+    const nodes = jsonLdDocuments(html);
+    assert.equal(nodes.length, 1, page);
+    assert.equal(nodes[0]["@type"], "Article", page);
+    assert.equal(nodes[0].url, canonical, page);
+    assert.match(nodes[0].datePublished, /^\d{4}-\d{2}-\d{2}$/, page);
+
+    for (const [, src] of html.matchAll(/<img[^>]+src="\.\.\/([^"]+)"/g)) {
+      await readRawFile(new URL(`../${src}`, import.meta.url));
+    }
+  }
+  for (const [index, [page]] of HOME_PAGES.map((home, i) => [home, NEWS_METADATA[i]])) {
+    const html = await readFile(new URL(`../${index}`, import.meta.url), "utf8");
+    assert.ok(html.includes(`href="${page}"`), `${index} links to ${page}`);
+  }
+});
+
+test("news pages name no analysis software and no client or project", async () => {
+  for (const [page] of NEWS_METADATA) {
+    const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
+    assert.doesNotMatch(html, /\b(code[_ ]?aster|salome|safir|abaqus|diana|femmasse|arenatum|roco)\b/i, page);
   }
 });
