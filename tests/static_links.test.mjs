@@ -74,11 +74,13 @@ test("tools pages link to structural tools and mark retaining tools pending", as
   }
 });
 
-test("home pages link to structural tools without a retaining-tools link", async () => {
+test("home pages link the structural, retaining and connection tools on their own domains", async () => {
   for (const page of HOME_PAGES) {
     const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
-    assert.match(html, /https:\/\/structural\.easuys\.com\//, page);
-    assert.doesNotMatch(html, /https:\/\/retaining\.easuys\.com\//, page);
+    assert.match(html, /href="https:\/\/structural\.easuys\.com\/"/, page);
+    assert.match(html, /href="https:\/\/retaining\.easuys\.com\/"/, page);
+    assert.match(html, /href="https:\/\/connection\.easuys\.com\/"/, page);
+    assert.doesNotMatch(html, /easuys-retaining-tools-web|workers\.dev/, page);
   }
 });
 
@@ -180,7 +182,7 @@ test("pull-request CI is read-only, bounded and cannot deploy", async () => {
 test("home pages link to the retaining technical preview and a project enquiry", async () => {
   for (const page of HOME_PAGES) {
     const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
-    assert.match(html, /href="https:\/\/www\.easuys\.be\/easuys-retaining-tools-web\/"/, page);
+    assert.match(html, /href="https:\/\/retaining\.easuys\.com\/"/, page);
     assert.match(html, /class="button-link" href="mailto:info@easuys\.be\?subject=/, page);
     assert.match(html, /href="tools\/(index-(en|fr)\.html)?"/, page);
   }
