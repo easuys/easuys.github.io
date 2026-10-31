@@ -352,6 +352,10 @@ a:hover {
     gap: 10px;
 }
 
+.footer-note {
+    flex-basis: 100%;
+}
+
 .lightbox {
     position: fixed;
     inset: 0;
