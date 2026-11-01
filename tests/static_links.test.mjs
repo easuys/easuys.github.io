@@ -43,17 +43,24 @@ const TOOL_ALTERNATES = [
   ["x-default", "https://www.easuys.be/tools/"],
 ];
 
-const NEWS_METADATA = [
-  ["nieuws/beweegt-uw-gebouw.html", "https://www.easuys.be/nieuws/beweegt-uw-gebouw.html"],
-  ["nieuws/is-your-building-moving.html", "https://www.easuys.be/nieuws/is-your-building-moving.html"],
-  ["nieuws/votre-batiment-bouge-t-il.html", "https://www.easuys.be/nieuws/votre-batiment-bouge-t-il.html"],
+// One entry per article, its pages in the order NL, EN, FR (the order of HOME_PAGES).
+const NEWS_ARTICLES = [
+  {
+    kind: "ground-motion",
+    pages: ["nieuws/beweegt-uw-gebouw.html", "nieuws/is-your-building-moving.html", "nieuws/votre-batiment-bouge-t-il.html"],
+  },
+  {
+    kind: "masonry",
+    pages: ["nieuws/metselwerk-steen-voor-steen.html", "nieuws/masonry-brick-by-brick.html", "nieuws/maconnerie-brique-par-brique.html"],
+  },
 ];
 
-const NEWS_ALTERNATES = [
-  ["nl-be", "https://www.easuys.be/nieuws/beweegt-uw-gebouw.html"],
-  ["en-gb", "https://www.easuys.be/nieuws/is-your-building-moving.html"],
-  ["fr-be", "https://www.easuys.be/nieuws/votre-batiment-bouge-t-il.html"],
-];
+const newsUrl = (page) => `https://www.easuys.be/${page}`;
+
+const NEWS_METADATA = NEWS_ARTICLES.flatMap((article) => article.pages.map((page) => [page, newsUrl(page)]));
+
+const newsAlternates = (article) =>
+  ["nl-be", "en-gb", "fr-be"].map((lang, i) => [lang, newsUrl(article.pages[i])]);
 
 function canonicalUrls(html) {
   return [...html.matchAll(/<link rel="canonical" href="([^"]+)">/g)].map(
@@ -208,10 +215,15 @@ test("home pages do not state that commercial-software validation is pending", a
 });
 
 test("news pages: canonical, hreflang, one Article, images present and linked from the home pages", async () => {
+  for (const article of NEWS_ARTICLES) {
+    for (const page of article.pages) {
+      const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
+      assert.deepEqual(alternateUrls(html), newsAlternates(article), page);
+    }
+  }
   for (const [page, canonical] of NEWS_METADATA) {
     const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
     assert.deepEqual(canonicalUrls(html), [canonical], page);
-    assert.deepEqual(alternateUrls(html), NEWS_ALTERNATES, page);
     assert.doesNotMatch(html, /https:\/\/easuys\.be\//, page);
     assert.doesNotMatch(html, /\{\{|\}\}/, `${page}: unfilled placeholder`);
 
@@ -225,9 +237,12 @@ test("news pages: canonical, hreflang, one Article, images present and linked fr
       await readRawFile(new URL(`../${src}`, import.meta.url));
     }
   }
-  for (const [index, [page]] of HOME_PAGES.map((home, i) => [home, NEWS_METADATA[i]])) {
-    const html = await readFile(new URL(`../${index}`, import.meta.url), "utf8");
-    assert.ok(html.includes(`href="${page}"`), `${index} links to ${page}`);
+  for (const article of NEWS_ARTICLES) {
+    for (const [i, index] of HOME_PAGES.entries()) {
+      const page = article.pages[i];
+      const html = await readFile(new URL(`../${index}`, import.meta.url), "utf8");
+      assert.ok(html.includes(`href="${page}"`), `${index} links to ${page}`);
+    }
   }
 });
 
@@ -239,8 +254,20 @@ test("news pages name no analysis software and no client or project", async () =
 });
 
 test("ground-motion news pages carry the Copernicus EGMS attribution with the adaptations", async () => {
-  for (const [page] of NEWS_METADATA) {
+  for (const page of NEWS_ARTICLES.find((article) => article.kind === "ground-motion").pages) {
     const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
     assert.match(html, /Copernicus Land Monitoring Service (information )?\(European Ground Motion Service\)/, page);
+  }
+});
+
+test("masonry news pages cite the test, the material data and the CC BY figure source, and share no code", async () => {
+  for (const page of NEWS_ARTICLES.find((article) => article.kind === "masonry").pages) {
+    const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
+    assert.match(html, /Vermeltfoort &amp; Raijmakers/, page);
+    assert.ok(html.includes("https://doi.org/10.1061/(ASCE)EM.1943-7889.0001592"), `${page}: Kumar & Barbato`);
+    assert.ok(html.includes("https://doi.org/10.3390/infrastructures7030031"), `${page}: Lemos & Sarhosis`);
+    assert.ok(html.includes("https://doi.org/10.3390/buildings13081915"), `${page}: Rainone et al.`);
+    assert.match(html, /CC BY 4\.0/, page);
+    assert.doesNotMatch(html, /github\.com|\.py\b|source code|broncode|code source/i, page);
   }
 });
